@@ -1,6 +1,43 @@
+
+
+using server;
+using MySql.Data.MySqlClient;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+Config config = new("server=127.0.0.1;uid=euroquest;pwd=euroquest;database=euroquest");
+builder.Services.AddSingleton<Config>(config);
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/users", Users.Get);
+app.MapGet("/hotels", Hotels.Get);
+app.MapGet("/users{id}", Users.GetById);
+app.MapDelete("/users{id}", Users.Delete);
+app.MapPost("/users", Users.Post);
+
+//app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
+
+// async task är samma som void
+async Task db_reset_to_default(Config config)
+{
+
+string users_create = """
+CREATE TABLE user
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(256) UNIQUE NOT NULL,
+    password VARCHAR(64)
+)
+""";
+
+    await MySqlHelper.ExecuteNonQueryAsync(config.db, "DROP TABLE IF EXISTS users");
+    await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);
+
+    await MySqlHelper.ExecuteNonQueryAsync(config.db, "INSERT INTO users(email, password) VALUES ('david@email.com','password123')");
+}
+
+
