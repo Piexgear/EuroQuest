@@ -16,7 +16,7 @@ app.MapGet("/users{id}", Users.GetById);
 app.MapDelete("/users{id}", Users.Delete);
 app.MapPost("/users", Users.Post);
 
-app.MapDelete("/db", db_reset_to_default);
+//app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
 
@@ -25,7 +25,7 @@ async Task db_reset_to_default(Config config)
 {
 
 string users_create = """
-CREATE TABLE users
+CREATE TABLE user
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(256) UNIQUE NOT NULL,
