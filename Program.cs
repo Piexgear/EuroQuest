@@ -12,6 +12,7 @@ builder.Services.AddSingleton<Config>(config);
 var app = builder.Build();
 
 app.MapGet("/users", Users.Get);
+app.MapGet("/hotels", Hotels.Get);
 app.MapGet("/users{id}", Users.GetById);
 app.MapDelete("/users{id}", Users.Delete);
 app.MapPost("/users", Users.Post);

@@ -5,17 +5,18 @@ using MySql.Data.MySqlClient;
 class Users
 {
     static List<User> users = new();
+    static List<Hotels> hotel = new();
 
-    public record Get_Data(int Id, string Email, string Password);
+    public record Get_Data(int Id, string Email, string Password, string role);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, email, password FROM user";
+        string query = "SELECT id, email, password, role FROM user";
         using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while(reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2)));
+                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
             }
         }
         return result;
