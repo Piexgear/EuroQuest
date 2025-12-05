@@ -9,7 +9,7 @@ class Activity
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, name, duration, price, adress, description FROM activity";
+        string query = "SELECT id, name, duration, price, address, description FROM activity";
         using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while(reader.Read())

@@ -1,5 +1,5 @@
 -- === USERS ===
-INSERT INTO `user` (name, email, password, role) VALUES
+INSERT INTO user (name, email, password, role) VALUES
 ('David Puscas', 'david@hotmail.com', 'password123', 'customer'),
 ('Jonathan Lopez', 'jonathan@hotmail.com', 'password123', 'customer'),
 ('Jenjira Phayakhruea', 'jenjira@ehotmail.com', 'password123', 'customer'),
@@ -266,7 +266,7 @@ INSERT INTO activity (name, duration, price, address, city_id, capacity, descrip
 ('La Rambla Walking Tour', 90, 20, 'La Rambla', 1, 25, 'Stadsrundtur i Barcelonas hjärta.'),
 ('Beach Yoga Barceloneta', 60, 25, 'Barceloneta Beach', 1, 30, 'Yoga vid stranden.'),
 ('Tapas Tasting Experience', 120, 50, 'Gothic Quarter', 1, 15, 'Lokala tapas och vinprovning.'),
-('Camp Nou Stadium Tour', 150, 35, 'Carrer d\'Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.),
+('Camp Nou Stadium Tour', 150, 35, 'Carrer d\'Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.'),
 ('Park Güell Tour', 90, 25, 'Park Güell', 1, 20, 'Upptäck Gaudis färgsprakande park.'),
 ('Montjuïc Cable Car Ride', 30, 15, 'Montjuïc', 1, 50, 'Utsikt över Barcelona.'),
 ('Barcelona Aquarium Visit', 60, 28, 'Port Vell', 1, 60, 'Populärt akvarium för alla åldrar.'),
