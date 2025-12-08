@@ -13,7 +13,8 @@ var app = builder.Build();
 
 app.MapGet("/users", Users.Get);
 app.MapGet("/hotels", Hotels.Get);
-app.MapGet("/country", Countrys.Get);
+app.MapGet("/country", Countries.Get);
+app.MapGet("/country{id}", Countries.GetById);
 app.MapGet("/city", City.Get);
 app.MapGet("/activity", Activity.Get);
 app.MapGet("/users{id}", Users.GetById);
@@ -28,7 +29,7 @@ app.Run();
 async Task db_reset_to_default(Config config)
 {
 
-string users_create = """
+    string users_create = """
 CREATE TABLE user
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
