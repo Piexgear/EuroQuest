@@ -1,4 +1,4 @@
-
+﻿
 
 using server;
 using MySql.Data.MySqlClient;
@@ -13,15 +13,15 @@ var app = builder.Build();
 
 app.MapGet("/users", Users.Get);
 app.MapGet("/hotels", Hotels.Get);
-app.MapGet("/country", Countries.Get);
-app.MapGet("/country{id}", Countries.GetById);
+app.MapGet("/countries", Countries.Get);
+app.MapGet("/countries/{id}", Countries.GetById);
 app.MapGet("/city", City.Get);
 app.MapGet("/activity", Activity.Get);
 app.MapGet("/users{id}", Users.GetById);
 app.MapDelete("/users{id}", Users.Delete);
 app.MapPost("/users", Users.Post);
 
-//app.MapDelete("/db", db_reset_to_default);
+app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
 
@@ -30,13 +30,20 @@ async Task db_reset_to_default(Config config)
 {
 
     string users_create = """
-CREATE TABLE user
+CREATE TABLE users
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(256) UNIQUE NOT NULL,
     password VARCHAR(64)
 )
 """;
+
+// string countires_create = """
+// CREATE TABLE countries
+// (
+
+// )
+// """;
 
     await MySqlHelper.ExecuteNonQueryAsync(config.db, "DROP TABLE IF EXISTS users");
     await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);

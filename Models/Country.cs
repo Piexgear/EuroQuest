@@ -23,25 +23,24 @@ class Countries
 
 
 
-    public record Get_DataById(int id, string name);
-    public static async Task<List<Get_DataById>> GetById(Get_DataById credentials, Config config)
+    public record GetById_Data(string Name);
+    public static async Task<GetById_Data?>
+    GetById(int id, Config config)
     {
-        List<Get_DataById> query_result = new();
+        GetById_Data? result = null;
         string queryid = "SELECT country_name FROM country WHERE id = @id";
         var parameters = new MySqlParameter[]
         {
-            new ("@id", credentials.id),
-            new ("@name", credentials.name)
-
+            new ("@id", id),
         };
 
-        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, queryid))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, queryid, parameters))
         {
             while (reader.Read())
             {
-                query_result.Add(new(reader.GetInt32(0), reader.GetString(1)));
+                result = new(reader.GetString(0));
             }
         }
-        return query_result;
+        return result;
     }
 }
