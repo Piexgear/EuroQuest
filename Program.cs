@@ -49,9 +49,64 @@ CREATE TABLE users
     email VARCHAR(256) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer'
-
 )
 """;
+
+    string countries_create = """
+    CREATE TABLE countries
+    (
+        id INTEGER NOT NULL AUTO_INCREMENT,
+	    country_name VARCHAR(255) NOT NULL
+    )
+""";
+
+    string cities_create = """
+    CREATE TABLE cities
+    (
+    )
+    """;
+
+    string hotels_create = """
+    CREATE TABLE hotels
+    (
+    )
+    """;
+
+    string rooms_create = """
+    CREATE TABLE rooms
+    (
+    )
+    """;
+
+    string activities_create = """
+    CREATE TABLE activities
+    (
+    )
+    """;
+
+    string packages_create = """
+    CREATE TABLE packages
+    (
+    )
+    """;
+
+    string packages_activities_create = """
+    CREATE TABLE packages_activities
+    (
+    )
+    """;
+
+    string bookings_create = """
+    CREATE TABLE bookings
+    (
+    )
+    """;
+
+    string rooms_bookings_create = """
+    CREATE TABLE rooms_bookings
+    (
+    )
+    """;
 
     await MySqlHelper.ExecuteNonQueryAsync(config.db, "DROP TABLE IF EXISTS users");
     await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);
