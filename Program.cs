@@ -33,7 +33,7 @@ app.MapGet("/users{id}", Users.GetById);
 app.MapDelete("/users{id}", Users.Delete);
 app.MapPost("/users", Users.Post);
 
-//app.MapDelete("/db", db_reset_to_default);
+app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
 
@@ -45,8 +45,11 @@ async Task db_reset_to_default(Config config)
 CREATE TABLE users
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    name (VARCHAR255),
     email VARCHAR(256) UNIQUE NOT NULL,
-    password VARCHAR(64)
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer'
+
 )
 """;
 
