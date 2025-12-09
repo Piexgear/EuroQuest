@@ -26,7 +26,7 @@ class Cities
     public static async Task<List<GetById_Data>> GetByCountryId(int countryId, Config config)
     {
         List<GetById_Data> result = new();
-        string query = "SELECT id, city_name FROM city WHERE country_id = @countryId";
+        string query = "SELECT id, city_name FROM city WHERE country = @countryId";
         var parameters = new MySqlParameter[]
         {
             new ("@countryId", countryId),

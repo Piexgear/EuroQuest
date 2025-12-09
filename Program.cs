@@ -21,6 +21,7 @@ app.MapGet("/users/{id}", Users.GetById);
 app.MapDelete("/users/{id}", Users.Delete);
 app.MapPost("/users", Users.Post);
 app.MapGet("/cities/country/{countryId}", Cities.GetByCountryId);
+app.MapGet("/bookings", Bookings.GetBookings);
 
 app.MapDelete("/db", db_reset_to_default);
 
