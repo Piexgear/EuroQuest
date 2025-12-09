@@ -1,4 +1,5 @@
 namespace server;
+
 using MySql.Data.MySqlClient;
 
 class Hotels
@@ -10,11 +11,15 @@ class Hotels
     {
         List<Get_Data> result = new();
         string query = "SELECT id, name, description, beach_distance FROM hotels";
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
-            while(reader.Read())
+            while (reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3)));
+                result.Add(new(
+                reader.GetInt32(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetInt32(3)));
             }
         }
         return result;

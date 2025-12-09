@@ -8,7 +8,7 @@ class Users
     static List<User> users = new();
     static List<Hotels> hotel = new();
 
-    public record Get_Data(int Id, string name, string Email, string Password);
+    public record Get_Data(int Id, string Name, string Email, string Password);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
@@ -17,7 +17,11 @@ class Users
         {
             while (reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                result.Add(new(
+                reader.GetInt32(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetString(3)));
             }
         }
         return result;

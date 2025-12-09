@@ -6,16 +6,19 @@ class Cities
 {
     static List<Hotels> hotel = new();
 
-    public record Get_Data(int Id, string City, int CoutryId);
+    public record Get_Data(int Id, string City, int Country);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, city_name, country_id FROM cities";
+        string query = "SELECT id, city_name, country FROM cities";
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while (reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2)));
+                result.Add(new(
+                reader.GetInt32(0),
+                reader.GetString(1),
+                reader.GetInt32(2)));
             }
         }
         return result;
