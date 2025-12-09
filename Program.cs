@@ -20,9 +20,9 @@ app.MapDelete("/login", Login.Delete);
 
 app.MapGet("/users", Users.Get);
 app.MapGet("/hotels", Hotels.Get);
-app.MapGet("/country", Countrys.Get);
-app.MapGet("/city", City.Get);
-app.MapGet("/activity", Activity.Get);
+app.MapGet("/countries", Countries.Get);
+app.MapGet("/cities", Cities.Get);
+app.MapGet("/activities", Activities.Get);
 app.MapGet("/users{id}", Users.GetById);
 app.MapDelete("/users{id}", Users.Delete);
 app.MapPost("/users", Users.Post);

@@ -12,7 +12,7 @@ class Users
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, name, email, password FROM user";
+        string query = "SELECT id, name, email, password FROM users";
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while (reader.Read())
@@ -28,7 +28,7 @@ class Users
     public static async Task<GetById_Data?> GetById(int id, Config config)
     {
         GetById_Data? result = null;
-        string query = "SELECT email, FROM user WHERE id = @id";
+        string query = "SELECT email, FROM users WHERE id = @id";
         var parameters = new MySqlParameter[] { new("@id", id) };
 
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
@@ -47,7 +47,7 @@ class Users
     public record Post_Args(string Name, string Email, string Password);
     public static async Task Post(Post_Args user, Config config)
     {
-        string querry = "INSERT INTO user(name, email, password) VALUES(@name, @email, @password)";
+        string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
 
         //indexerar själv för inmatning av data 
         var parameters = new MySqlParameter[]
@@ -63,7 +63,7 @@ class Users
 
     public static async Task Delete(int id, Config config)
     {
-        string query = "DELETE FROM user WHERE id = @id";
+        string query = "DELETE FROM users WHERE id = @id";
         var parameters = new MySqlParameter[] { new("@id", id) };
         await MySqlHelper.ExecuteNonQueryAsync(config.db, query, parameters);
     }
