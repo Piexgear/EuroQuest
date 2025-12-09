@@ -7,7 +7,7 @@ class Bookings
 
 
     // Visa vilka bokningar användaren har!
-    public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int gusts);
+    public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
     public static async Task<List<Get_Data>> GetBookings(Config config)
     {
         List<Get_Data> result = new();
