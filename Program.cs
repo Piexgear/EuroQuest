@@ -15,11 +15,12 @@ app.MapGet("/users", Users.Get);
 app.MapGet("/hotels", Hotels.Get);
 app.MapGet("/countries", Countries.Get);
 app.MapGet("/countries/{id}", Countries.GetById);
-app.MapGet("/city", City.Get);
+app.MapGet("/cities", Cities.Get);
 app.MapGet("/activity", Activity.Get);
-app.MapGet("/users{id}", Users.GetById);
-app.MapDelete("/users{id}", Users.Delete);
+app.MapGet("/users/{id}", Users.GetById);
+app.MapDelete("/users/{id}", Users.Delete);
 app.MapPost("/users", Users.Post);
+app.MapGet("/cities/country/{countryId}", Cities.GetByCountryId);
 
 app.MapDelete("/db", db_reset_to_default);
 
@@ -38,12 +39,12 @@ CREATE TABLE users
 )
 """;
 
-// string countires_create = """
-// CREATE TABLE countries
-// (
+    // string countires_create = """
+    // CREATE TABLE countries
+    // (
 
-// )
-// """;
+    // )
+    // """;
 
     await MySqlHelper.ExecuteNonQueryAsync(config.db, "DROP TABLE IF EXISTS users");
     await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);

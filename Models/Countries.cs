@@ -6,7 +6,7 @@ class Countries
 {
     static List<Hotels> Country = new();
 
-    public record Get_Data(int Id, string country);
+    public record Get_Data(int Id, string Country);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
