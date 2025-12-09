@@ -5,11 +5,11 @@ class City
 {
     static List<Hotels> hotel = new();
 
-    public record Get_Data(int Id, string City, int CoutryId);
+    public record Get_Data(int Id, string City, int CountryId);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, city_name, country_id FROM city";
+        string query = "SELECT id, city_name, country FROM city";
         using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while(reader.Read())

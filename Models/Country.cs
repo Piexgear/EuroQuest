@@ -28,7 +28,7 @@ class Countries
     GetById(int id, Config config)
     {
         GetById_Data? result = null;
-        string queryid = "SELECT country_name FROM country WHERE id = @id";
+        string queryid = "SELECT country_name, id FROM country WHERE id = @id";
         var parameters = new MySqlParameter[]
         {
             new ("@id", id),
@@ -41,6 +41,7 @@ class Countries
                 result = new(reader.GetString(0));
             }
         }
+        
         return result;
     }
 }
