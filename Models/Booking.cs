@@ -44,16 +44,7 @@ class Bookings
         {
             while(reader.Read())
             {
-                result.Add(new Get_Data(
-                    reader.GetInt32(0),
-                    reader.GetString(1),
-                    reader.GetString(2),
-                    reader.GetString(3),
-                    reader.GetString(4),
-                    reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
-                    reader.GetDateTime(6),
-                    reader.GetDateTime(7),
-                    reader.GetInt32(8)
+                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
