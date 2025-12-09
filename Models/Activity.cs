@@ -1,4 +1,5 @@
 namespace server;
+
 using MySql.Data.MySqlClient;
 
 class Activity
@@ -10,11 +11,30 @@ class Activity
     {
         List<Get_Data> result = new();
         string query = "SELECT id, name, duration, price, address, description FROM activity";
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
-            while(reader.Read())
+            while (reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3), 
+                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3),
+                reader.GetString(4), reader.GetString(5)));
+            }
+        }
+        return result;
+    }
+    public static async Task<List<Get_Data>> GetCityActivity(int cityId, Config config)
+    {
+        List<Get_Data> result = new();
+        string query = "SELECT id, name, duration, price, address, description FROM activity WHERE city = @cityId";
+        var parameters = new MySqlParameter[]
+        {
+            new ("@cityId", cityId),
+        };
+
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
+        {
+            while (reader.Read())
+            {
+                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3),
                 reader.GetString(4), reader.GetString(5)));
             }
         }

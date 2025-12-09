@@ -10,18 +10,28 @@ Config config = new("server=127.0.0.1;uid=euroquest;pwd=euroquest;database=euroq
 builder.Services.AddSingleton<Config>(config);
 
 var app = builder.Build();
-
+//users 
 app.MapGet("/users", Users.Get);
-app.MapGet("/hotels", Hotels.Get);
-app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
-app.MapGet("/countries", Countries.Get);
-app.MapGet("/countries/{id}", Countries.GetById);
-app.MapGet("/cities", Cities.Get);
-app.MapGet("/activity", Activity.Get);
+app.MapPost("/users", Users.Post);
 app.MapGet("/users/{id}", Users.GetById);
 app.MapDelete("/users/{id}", Users.Delete);
-app.MapPost("/users", Users.Post);
+
+//countries
+app.MapGet("/countries", Countries.Get);
+app.MapGet("/countries/{id}", Countries.GetById);
+
+//cities
+app.MapGet("/cities", Cities.Get);
 app.MapGet("/cities/countries/{countryId}", Cities.GetByCountryId);
+
+//hotels
+app.MapGet("/hotels", Hotels.Get);
+app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
+
+//activities
+app.MapGet("/activity", Activity.Get);
+app.MapGet("/activity/cities/{cityId}", Activity.GetCityActivity);
+
 
 app.MapDelete("/db", db_reset_to_default);
 
