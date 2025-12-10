@@ -23,11 +23,11 @@ class Countries
 
 
 
-    public record GetById_Data(string Name);
-    public static async Task<GetById_Data?>
-    GetById(int id, Config config)
+    public record PostById_Data(string Name);
+    public static async Task<PostById_Data?>
+    PostById(int id, Config config)
     {
-        GetById_Data? result = null;
+        PostById_Data? result = null;
         string queryid = "SELECT country_name FROM country WHERE id = @id";
         var parameters = new MySqlParameter[]
         {

@@ -18,7 +18,7 @@ app.MapDelete("/users/{id}", Users.Delete);
 
 //countries
 app.MapGet("/countries", Countries.Get);
-app.MapGet("/countries/{id}", Countries.GetById);
+app.MapPost("/countries/{id}", Countries.PostById);
 
 //cities
 app.MapGet("/cities", Cities.Get);
