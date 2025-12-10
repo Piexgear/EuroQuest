@@ -140,7 +140,7 @@ INSERT INTO hotels (name, city, amount_of_rooms, description, beach_distance, po
 ('Old Town Cologne Hotel', 16, 10, 'Historic area.', 9999, 0, 1, 300),
 ('Cologne Central Station Suites', 16, 10, 'Convenient location.', 9999, 1, 1, 150);
 
-INSERT INTO rooms (number, hotels_id, capacity, price) VALUES
+INSERT INTO rooms (number, hotel, capacity, price) VALUES
 (1,1,2,145),(2,1,2,145),(3,1,2,145),(4,1,2,145),(5,1,2,145),
 (6,1,2,145),(7,1,2,145),(8,1,2,145),(9,1,2,145),(10,1,2,145),
 (1,2,2,150),(2,2,2,150),(3,2,2,150),(4,2,2,150),(5,2,2,150),
