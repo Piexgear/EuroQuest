@@ -1,4 +1,4 @@
-using server;
+﻿using server;
 using MySql.Data.MySqlClient;
 
 Config config = new("server=127.0.0.1;uid=euroquest;pwd=euroquest;database=euroquest");
@@ -13,19 +13,31 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
-
+//users 
+app.MapGet("/users", Users.Get);
 app.MapGet("/profile", Profile.Get);
 app.MapPost("/login", Login.Post);
-app.MapDelete("/login", Login.Delete);
+app.MapDelete("/login", Login.Delete);   //kan vara onödiga eventuellt ta bort 
+app.MapDelete("/users{id}", Users.Delete);  // -|| -
+app.MapGet("/users/{id}", Users.GetById);  // - || -
 
-app.MapGet("/users", Users.Get);
-app.MapGet("/hotels", Hotels.Get);
+
+//countries
 app.MapGet("/countries", Countries.Get);
+app.MapPost("/countries/{id}", Countries.PostById);
+
+//cities
 app.MapGet("/cities", Cities.Get);
+app.MapGet("/cities/countries/{countryId}", Cities.GetByCountryId);
+
+//hotels
+app.MapGet("/hotels", Hotels.Get);
+app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
+
+//activities
 app.MapGet("/activities", Activities.Get);
-app.MapGet("/users{id}", Users.GetById);
-app.MapDelete("/users{id}", Users.Delete);
-app.MapPost("/users", Users.Post);
+app.MapGet("/activity/cities/{cityId}", Activities.GetCityActivity);
+
 
 app.UseSession();
 app.MapDelete("/db", db_reset_to_default);
