@@ -1,16 +1,16 @@
 -- === USERS ===
-INSERT INTO `user` (name, email, password, role) VALUES
+INSERT INTO users (name, email, password, role) VALUES
 ('David Puscas', 'david@hotmail.com', 'password123', 'customer'),
 ('Jonathan Lopez', 'jonathan@hotmail.com', 'password123', 'customer'),
 ('Jenjira Phayakhruea', 'jenjira@ehotmail.com', 'password123', 'customer'),
 ('Gustav Fransson', 'gustav@hotmail.com', 'password456', 'customer'),
-('Lina Hallgergren', 'john@hotmail.com', 'password456', 'customer'),
+('Lina Hallgergren', 'Lina@hotmail.com', 'password456', 'customer'),
 ('John Doe', 'john@hotmail.com', 'password456', 'customer'),
 ('Admin ', 'admin', 'admin', 'admin');
 
 
 -- === COUNTRIES ===
-INSERT INTO country (country_name) VALUES
+INSERT INTO countries (country_name) VALUES
 ('Spain'),
 ('Italy'),
 ('France'),
@@ -18,7 +18,7 @@ INSERT INTO country (country_name) VALUES
 
 
 -- === CITIES (4 per land) ===
-INSERT INTO city (city_name, country_id) VALUES
+INSERT INTO cities (city_name, country) VALUES
 -- Spain (1)
 ('Barcelona', 1),
 ('Madrid', 1),
@@ -43,7 +43,7 @@ INSERT INTO city (city_name, country_id) VALUES
 ('Hamburg', 4),
 ('Cologne', 4);
 
-INSERT INTO hotels (name, city_id, amount_of_rooms, description, beach_distance, pool, breakfast, center_distance) VALUES
+INSERT INTO hotels (name, city, amount_of_rooms, description, beach_distance, pool, breakfast, center_distance) VALUES
 -- Barcelona (1)
 ('Barcelona Central Hotel', 1, 10, 'Hotel in the heart of Barcelona.', 1500, 1, 1, 300),
 ('Beachside Barcelona Resort', 1, 10, 'Near Barceloneta beach.', 200, 1, 1, 2000),
@@ -261,12 +261,12 @@ INSERT INTO rooms (number, hotels_id, capacity, price) VALUES
 (6,59,2,110),(7,59,2,110),(8,59,2,110),(9,59,2,130),(10,59,2,130);
 
 
-INSERT INTO activity (name, duration, price, address, city_id, capacity, description) VALUES
+INSERT INTO activities (name, duration, price, address, city, capacity, description) VALUES
 ('Guided Tour: Sagrada Familia', 120, 40, 'Carrer de Mallorca', 1, 20, 'Guidad tur i Gaudis mästerverk.'),
 ('La Rambla Walking Tour', 90, 20, 'La Rambla', 1, 25, 'Stadsrundtur i Barcelonas hjärta.'),
 ('Beach Yoga Barceloneta', 60, 25, 'Barceloneta Beach', 1, 30, 'Yoga vid stranden.'),
 ('Tapas Tasting Experience', 120, 50, 'Gothic Quarter', 1, 15, 'Lokala tapas och vinprovning.'),
-('Camp Nou Stadium Tour', 150, 35, 'Carrer d\'Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.),
+('Camp Nou Stadium Tour', 150, 35, 'Carrer d\'Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.'),
 ('Park Güell Tour', 90, 25, 'Park Güell', 1, 20, 'Upptäck Gaudis färgsprakande park.'),
 ('Montjuïc Cable Car Ride', 30, 15, 'Montjuïc', 1, 50, 'Utsikt över Barcelona.'),
 ('Barcelona Aquarium Visit', 60, 28, 'Port Vell', 1, 60, 'Populärt akvarium för alla åldrar.'),
