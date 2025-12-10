@@ -34,7 +34,11 @@ class Hotels
         {
             while (reader.Read())
             {
-                result.Add(new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3)));
+                result.Add(new(
+                reader.GetInt32(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetInt32(3)));
             }
         }
         return result;
