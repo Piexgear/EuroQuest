@@ -6,11 +6,11 @@ class Countries
 {
     static List<Hotels> Country = new();
 
-    public record Get_Data(int Id, string Country);
+    public record Get_Data(int Id, string countries);
     public static async Task<List<Get_Data>> Get(Config config)
     {
         List<Get_Data> result = new();
-        string query = "SELECT id, country_name FROM country";
+        string query = "SELECT id, country_name FROM countries";
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while (reader.Read())
@@ -23,12 +23,12 @@ class Countries
 
 
 
-    public record GetById_Data(string Name);
-    public static async Task<GetById_Data?>
-    GetById(int id, Config config)
+    public record PostById_Data(string Name);
+    public static async Task<PostById_Data?>
+    PostById(int id, Config config)
     {
-        GetById_Data? result = null;
-        string queryid = "SELECT country_name, id FROM country WHERE id = @id";
+        PostById_Data? result = null;
+        string queryid = "SELECT country_name FROM country WHERE id = @id";
         var parameters = new MySqlParameter[]
         {
             new ("@id", id),
