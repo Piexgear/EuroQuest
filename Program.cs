@@ -36,7 +36,7 @@ app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
 
 //activities
 app.MapGet("/activities", Activities.Get);
-app.MapGet("/activity/cities/{cityId}", Activity.GetCityActivity);
+app.MapGet("/activity/cities/{cityId}", Activities.GetCityActivity);
 
 
 app.UseSession();
