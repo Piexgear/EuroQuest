@@ -229,4 +229,26 @@ class ChangeBooking
         int NewGuests
     );
     
+    public static async Task UpdateBooking(Change_Data data, Config config)
+    {
+        const string updateBookingQuery = @"
+        UPDATE bookings
+        SET package = @package,
+        check_in = @check_in,
+        check_out = @check_out,
+        guests = @guests
+        WHERE id = @id;
+        ";
+
+        var updateParams = new MySqlParameter[]
+        {
+            new("@id", data.BookingId),
+            new("@package", data.NewPackageId),
+            new("@check_in", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
+            new("@check_out", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
+            new("@guests", data.NewGuests)
+        };
+
+        await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateParams);
+    }
 }
