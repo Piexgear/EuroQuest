@@ -122,36 +122,97 @@ class Bookings
 }
 
 
+
+// Class för antal gäster som användaren väljer
 class AmountOfPeople
 {
     public record Get_Data(
-        int Id,
-        int Package,
-        int User,
-        DateOnly CheckIn,
-        DateOnly CheckOut,
-        int Guests
+        int Id,               // bookings ID 
+        int Package,          // Paket - ID kopplat till bokningen
+        int User,             // Användarens ID
+        DateOnly CheckIn,     // Datum för incheckning
+        DateOnly CheckOut,    // Datum för utcheckning
+        int Guests            // Antal gäster i bokningen
     );
 
+
+// Hämtar bokningsdata från databasen
     public static async Task<List<Get_Data>> Get(Config config)
     {
+        // Skapar en tom lista som ska fyllas med Get_Data objekt
         List<Get_Data> result = new();
+
+        // SQL fråga som hämtar nödvändiga kolumner från bookings tabellen
         string query = "SELECT id, package, user, check_in, check_out, guests FROM bookings";
 
+        // Kör SQL frågan och får tillbaka en reader som läser rad för rad
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
+            // Loopa igenom varje rad i resultatet
             while (reader.Read())
             {
+                // Lägger till ett nytt Get_Data objekt i listan
                 result.Add(new(
-                    reader.GetInt32(0),
-                    reader.GetInt32(1),
-                    reader.GetInt32(2),
-                    DateOnly.FromDateTime(reader.GetDateTime(3)),
-                    DateOnly.FromDateTime(reader.GetDateTime(4)),
-                    reader.GetInt32(5)
+                    reader.GetInt32(0),   // Läser ID (kolumn 0)
+                    reader.GetInt32(1),   // Läser PackageID (kolumn 1)
+                    reader.GetInt32(2),   // Läser UserID (kolumn 2)
+                    DateOnly.FromDateTime(reader.GetDateTime(3)),     // Konverterar check_in från DateTime --> DateOnly
+                    DateOnly.FromDateTime(reader.GetDateTime(4)),     // Konverterar check_out från DateTime --> DateOnly 
+                    reader.GetInt32(5)    // Läser antal gäster (kolumn 5)
                 ));
             }
         }
+        // Returnerar listan med alla hämtade bokningar
         return result;
     }
 }
+
+
+// Class för att kunna avboka och FÖRHOPPNINGSVIS spara avbokade i vår package
+class CancelBooking
+{
+    // public metod som körs när användaren avbokar en bokning
+    // bookingId = vilken bokning som ska avbokas
+    // config = databas - inställningar (connection string)
+    public static async Task Delete(int bookingId, Config config)
+    {
+        // ==================================
+        //  1. Markerar bokning som avbokad
+        // ==================================
+
+        // SQL query som ändrar bokningen så att den är satt på avbokad
+        // men den raderas INTE från databasen
+        const string cancelBookingQuery = "UPDATE bookings SET is_cancelled = 1 WHERE id = @bookingId";
+
+        // Skapar en parameterlista till query
+        // Här binder vi värdet bookingId till @bookingId i SQL
+        var cancelParams = new MySqlParameter[]
+        {
+            new("@bookingId", bookingId)
+        };
+
+        // Kör SQL kommandot mot databasen 
+        // ExecuteNonQueryAsync används för UPDATE/DELETE 
+        await MySqlHelper.ExecuteNonQueryAsync(config.db, cancelBookingQuery, cancelParams);  // 1. config.db = databas connection. 2. cancelBookingQuery = SQL kod.  3. cancelParams = Parametrar
+
+
+        // =================================================================
+        //  2. Tar bort rumsbokningar (FRIVILLIGT)
+        // =================================================================
+
+        // Detta gör att rummet blir lediga igen.
+        // Själva bokningen finns kvar i bookings tabellen
+        // men kopplingen till bokade rum tas bort
+        const string deleteRoomBookingQuery = "DELETE FROM room_booking WHERE booking = @bookingId";
+
+        // Parametrar för att koppla värdet bookingId till SQL
+        var roomParams = new MySqlParameter[]
+        {
+            new("@bookingId", bookingId)
+        };
+
+        // Kör DELETE på room_booking så rummen frigörs
+        await MySqlHelper.ExecuteNonQueryAsync(config.db, deleteRoomBookingQuery, roomParams);
+    }
+}
+
