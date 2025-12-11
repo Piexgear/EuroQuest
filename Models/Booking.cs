@@ -61,11 +61,17 @@ class Bookings
 
 
             // =====================Mål att göra denna för den inloggade användaren=========================
-    public record GetByUser_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
-    public static async Task<List<Get_Data>> GetByUser_data(GetByUser_Data userid ,Config config, HttpContext ctx)
+    public record GetByUser_Data(int UserId);
+    public static async Task<List<Get_Data>> GetByUser_data(Config config, HttpContext ctx)
     {
+
+        int? userid = ctx.Session.GetInt32("user_id");
+
+        if (!ctx.Session.IsAvailable)
+        {
+            return null;
+        }
         List<Get_Data> result = new();
-        bool loggedIn = false;
         string query = """
             SELECT 
             b.id AS booking_id,
@@ -79,44 +85,35 @@ class Bookings
             b.guests
             FROM bookings b
             
-            JOIN user u 
-            ON b.user = u.id
+            JOIN users u 
+            ON b.users = u.id
 
-            JOIN package p 
+            JOIN packages p 
             ON b.package = p.id
             
             JOIN hotels h 
             ON p.hotel = h.id
             
-            JOIN city ci 
+            JOIN cities ci 
             ON h.city = ci.id
             
-            JOIN country c 
+            JOIN countries c 
             ON ci.country = c.id
             
-            LEFT JOIN room_booking rb 
+            LEFT JOIN room_bookings rb 
             ON b.id = rb.booking
             
             LEFT JOIN rooms r 
             ON rb.room = r.id
+            WHERE u.id = @user_id
             ORDER BY b.id, r.number;
         """;
         var parameters = new MySqlParameter[]
         {
-            new("@UserId", userid.Customer)
+            new("@user_id", userid)
         };
-  
 
-        object query_result = await MySqlHelper.ExecuteScalarAsync(config.db, query, parameters);
-        if (query_result is int id)
-        {
-            if (ctx.Session.IsAvailable)
-            {
-                loggedIn = true;
-            }
-        }
-
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
         {
             while(reader.Read())
             {
@@ -124,14 +121,7 @@ class Bookings
                 ));
             }
         }
-        if (!loggedIn)
-        {
-            return null;
-        }
-        else
-        {
         return result;  
-        }
     }
     
 }
