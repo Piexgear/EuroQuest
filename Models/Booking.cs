@@ -62,7 +62,7 @@ class Bookings
 
             // =====================Mål att göra denna för den inloggade användaren=========================
     public record GetByUser_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
-    public static async Task<List<Get_Data>> GetByUser_data(GetByUser_Data userid ,Config config, HttpContext ctx)
+    public static async Task<List<Get_Data>> GetByUser_data(Config config, HttpContext ctx)
     {
         List<Get_Data> result = new();
         bool loggedIn = false;
@@ -85,7 +85,6 @@ class Bookings
             JOIN country c ON ci.country = c.id
             LEFT JOIN room_booking rb ON b.id = rb.booking
             LEFT JOIN rooms r ON rb.room = r.id
-            WHERE u.id = @UserId
             ORDER BY b.id, r.number;
         """;
         var parameters = new MySqlParameter[]
