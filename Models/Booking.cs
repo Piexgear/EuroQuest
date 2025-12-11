@@ -76,18 +76,25 @@ class Bookings
             b.check_out,
             b.guests
             FROM bookings b
+            
             JOIN user u 
             ON b.user = u.id
+
             JOIN package p 
             ON b.package = p.id
+            
             JOIN hotels h 
             ON p.hotel = h.id
+            
             JOIN city ci 
             ON h.city = ci.id
+            
             JOIN country c 
             ON ci.country = c.id
+            
             LEFT JOIN room_booking rb 
             ON b.id = rb.booking
+            
             LEFT JOIN rooms r 
             ON rb.room = r.id
             ORDER BY b.id, r.number;
