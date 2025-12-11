@@ -9,8 +9,10 @@ class Users
     static List<Hotels> hotel = new();
 
     public record Get_Data(int Id, string Name, string Email, string Password);
-    public static async Task<List<Get_Data>> Get(Config config)
+    public static async Task<List<Get_Data>> Get(Config config, HttpContext ctx)
     {
+        if (ctx.Session.GetString("role") == "admin")
+        {
         List<Get_Data> result = new();
         string query = "SELECT id, name, email, password FROM users";
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
@@ -25,6 +27,11 @@ class Users
             }
         }
         return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
