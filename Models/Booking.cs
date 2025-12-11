@@ -1,5 +1,6 @@
 namespace server;
 
+using System.Security.Cryptography.X509Certificates;
 using MySql.Data.MySqlClient;
 
 class Bookings
@@ -60,10 +61,11 @@ class Bookings
 
 
             // =====================Mål att göra denna för den inloggade användaren=========================
-        public record GetByUser_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
-    public static async Task<List<Get_Data>> GetByUser_data(Config config)
+    public record GetByUser_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
+    public static async Task<List<Get_Data>> GetByUser_data(GetByUser_Data userid ,Config config, HttpContext ctx)
     {
         List<Get_Data> result = new();
+        bool loggedIn = false;
         string query = """
             SELECT 
             b.id AS booking_id,
@@ -99,8 +101,22 @@ class Bookings
             ON rb.room = r.id
             ORDER BY b.id, r.number;
         """;
+        var parameters = new MySqlParameter[]
+        {
+            new("@UserId", userid.Customer)
+        };
+  
 
-       using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        object query_result = await MySqlHelper.ExecuteScalarAsync(config.db, query, parameters);
+        if (query_result is int id)
+        {
+            if (ctx.Session.IsAvailable)
+            {
+                loggedIn = true;
+            }
+        }
+
+        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
             while(reader.Read())
             {
@@ -108,9 +124,14 @@ class Bookings
                 ));
             }
         }
-        return result;
+        if (!loggedIn)
+        {
+            return null;
+        }
+        else
+        {
+        return result;  
+        }
     }
-
-
-
+    
 }

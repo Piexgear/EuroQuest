@@ -28,6 +28,8 @@ app.MapGet("/users/{id}", Users.GetById);  // - || -
 app.MapGet("/profile", Profile.Get);
 app.MapGet("/bookings", Bookings.GetBookings);
 
+app.MapGet("/bookings/user", Bookings.GetByUser_data); 
+
 //countries
 app.MapGet("/countries", Countries.Get);
 app.MapPost("/countries/{id}", Countries.PostById);
