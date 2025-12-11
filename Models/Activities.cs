@@ -69,4 +69,10 @@ class Activities
         }
         return result;
     }
+
+
 }
+
+// Som användare vill jag kunna välja ifall det ska finnas några aktiviteter i mitt packet // ACTIVITY YN
+
+

@@ -39,6 +39,7 @@ app.MapGet("/activities", Activities.Get);
 app.MapGet("/activity/cities/{cityId}", Activities.GetCityActivity);
 
 
+
 app.UseSession();
 app.MapDelete("/db", db_reset_to_default);
 
