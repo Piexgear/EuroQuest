@@ -218,19 +218,33 @@ class CancelBooking
 
 
 
-
+// ==================================================================================
+// Class: ChangeBooking
+// Låta användaren ändra sin befintliga bokning (paket, datum och antal gäster)
+// ===================================================================================
 class ChangeBooking
 {
-    public record Change_Data(
-        int BookingId,
-        int NewPackageId,
-        DateOnly NewCheckIn,
-        DateOnly NewCheckOut,
-        int NewGuests
+
+    // -------------------------------------------------------
+    // 1. Record som beskriver vilka ändringar användaren gör
+    // -------------------------------------------------------
+      public record Change_Data(
+        int BookingId,            // ID på bokningen som ska ändras 
+        int NewPackageId,         // Nytt paket (package_id)
+        DateOnly NewCheckIn,      // Nytt datum för check in
+        DateOnly NewCheckOut,     // Nytt datum för check out
+        int NewGuests             // Nytt antal gäster
     );
-    
+
+    // -------------------------------------------------------------------
+    // Metod som uppdaterar bokningen i databasen
+    // data = alla nya värden
+    // config = innehåller connection string (config.db)
+    // -------------------------------------------------------------------
     public static async Task UpdateBooking(Change_Data data, Config config)
     {
+        // SQL query som uppdaterar en rad i tabellen bookings
+        // Vi ändrar paket, datum och antal gäster för en viss bokning (id)
         const string updateBookingQuery = @"
         UPDATE bookings
         SET package = @package,
@@ -240,15 +254,21 @@ class ChangeBooking
         WHERE id = @id;
         ";
 
+// Skapar en lista med parametrar som matchar @ värden i SQL queryn
         var updateParams = new MySqlParameter[]
         {
+            // ID på bokningen som ska uppdateras
             new("@id", data.BookingId),
+            // För nytt paket
             new("@package", data.NewPackageId),
+            // DateOnly --> DateTime innan vi skickar till databasen
             new("@check_in", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
             new("@check_out", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
+            // Nytt antal gäster
             new("@guests", data.NewGuests)
         };
 
-        await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateParams);
+        // Kör UPDATE - kommandot mot databasen (ingen data kommer att returneras)
+        await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateParams);    // 1. config.db = connection string.  2. updateBookingQuery = vår SQL text.  3. updateParams = parametrarna vi just skapade.
     }
 }
