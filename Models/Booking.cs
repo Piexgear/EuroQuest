@@ -216,3 +216,17 @@ class CancelBooking
     }
 }
 
+
+
+
+class ChangeBooking
+{
+    public record Change_Data(
+        int BookingId,
+        int NewPackageId,
+        DateOnly NewCheckIn,
+        DateOnly NewCheckOut,
+        int NewGuests
+    );
+    
+}
