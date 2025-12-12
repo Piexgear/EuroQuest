@@ -50,9 +50,9 @@ class Bookings
             ORDER BY b.id, r.number;
         """;
 
-       using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
-            while(reader.Read())
+            while (reader.Read())
             {
                 result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
@@ -125,10 +125,10 @@ class Bookings
         };
 
         // kör SQL-frågan asynkront och får tillbaka en reader som kan läsa rad för rad
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
         {
             // läs igenom varje rad i resultatet
-            while(reader.Read())
+            while (reader.Read())
             {
                 // skapar ett nytt Get_Data-objekt för varje rad och lägger det i result-listan
                 // reader.IsDBNull(5) används för att undvika krasch om rum saknas
@@ -137,7 +137,7 @@ class Bookings
             }
         }
         // returnerar listan med alla bokningar för användaren
-        return result;  
+        return result;
     }
 
 
@@ -155,7 +155,7 @@ class Bookings
         );
 
 
-    // Hämtar bokningsdata från databasen
+        // Hämtar bokningsdata från databasen
         public static async Task<List<Get_Data>> Get(Config config)
         {
             // Skapar en tom lista som ska fyllas med Get_Data objekt
@@ -273,7 +273,7 @@ class Bookings
             WHERE id = @id;
             ";
 
-    // Skapar en lista med parametrar som matchar @ värden i SQL queryn
+            // Skapar en lista med parametrar som matchar @ värden i SQL queryn
             var updateParams = new MySqlParameter[]
             {
                 // ID på bokningen som ska uppdateras

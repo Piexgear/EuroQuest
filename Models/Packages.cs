@@ -1,5 +1,6 @@
 namespace server;
 
+using System.Data;
 using MySql.Data.MySqlClient;
 class Packages
 {
@@ -35,15 +36,20 @@ class Packages
     public record Post_Data(int HotelId, List<int> ActivityId);
 
     //create a package
-    public static async Task<int> Post(Post_Data data, Config config)
+    public static async Task<int> Post(Post_Data data, Config config, HttpContext ctx)
     {
+        //get logged in userid från session 
+        int? userId = ctx.Session.GetInt32("user_id");
+
+        if (userId == null)
+            throw new Exception("Ingen användare är inloggad.");
 
         //check if an identical package already exists
         //a package is identical if:
         //it has de same hotel id and it contains exactly the same activity ids, check with sum and count
         string activityList = string.Join(",", data.ActivityId);
 
-        string checkQuery = """
+        string checkQuery = $"""
             SELECT p.id
             FROM packages p
             JOIN package_activities pa ON pa.package = p.id
@@ -70,10 +76,12 @@ class Packages
         }
 
         // insert package(hotel reference only)
-        string insertPackageQuery = "INSERT INTO packages (hotel) VALUES (@hotelId)";
+        string insertPackageQuery = "INSERT INTO packages (hotel, created_by) VALUES (@hotelId, @userId)";
         var packageParameters = new MySqlParameter[]
         {
-            new("@hotelId", data.HotelId)
+            new("@hotelId", data.HotelId),
+            new("@userId", userId.Value)
+
         };
 
         await MySqlHelper.ExecuteNonQueryAsync(
