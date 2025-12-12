@@ -266,9 +266,83 @@ INSERT INTO activities (name, duration, price, address, city, capacity, descript
 ('La Rambla Walking Tour', 90, 20, 'La Rambla', 1, 25, 'Stadsrundtur i Barcelonas hjärta.'),
 ('Beach Yoga Barceloneta', 60, 25, 'Barceloneta Beach', 1, 30, 'Yoga vid stranden.'),
 ('Tapas Tasting Experience', 120, 50, 'Gothic Quarter', 1, 15, 'Lokala tapas och vinprovning.'),
-('Camp Nou Stadium Tour', 150, 35, 'Carrer d\'Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.'),
+('Camp Nou Stadium Tour', 150, 35, 'Carrer d\Aristides Maillol', 1, 40, 'FC Barcelonas ikoniska arena.'),
 ('Park Güell Tour', 90, 25, 'Park Güell', 1, 20, 'Upptäck Gaudis färgsprakande park.'),
 ('Montjuïc Cable Car Ride', 30, 15, 'Montjuïc', 1, 50, 'Utsikt över Barcelona.'),
 ('Barcelona Aquarium Visit', 60, 28, 'Port Vell', 1, 60, 'Populärt akvarium för alla åldrar.'),
 ('Paella Cooking Class', 180, 55, 'El Born', 1, 12, 'Lär dig laga äkta paella.'),
-('Sunset Sailing Tour', 120, 70, 'Port Olímpic', 1, 8, 'Segling längs Barcelonas kust.');
+('Sunset Sailing Tour', 120, 70, 'Port Olímpic', 1, 8, 'Segling längs Barcelonas kust.'),
+('Royal Palace Guided Tour', 120, 35, 'Calle de Bailén', 2, 25, 'Guidad tur i Madrids kungliga palats.'),
+('Retiro Park Boat Ride', 60, 15, 'Parque del Retiro', 2, 20, 'Ro en båt i den berömda parken.'),
+('Prado Museum Tour', 120, 30, 'Paseo del Prado', 2, 20, 'Kulturupplevelse i Spaniens mest kända museum.'),
+('Tapas Evening in La Latina', 150, 45, 'Calle Cava Baja', 2, 15, 'Tapasrunda i Madrids gastronomiska kvarter.'),
+('Oceanogràfic Visit', 120, 32, 'Ciutat de les Arts i les Ciències', 3, 50, 'Besök Europas största akvarium.'),
+('Old Town Bike Tour', 90, 20, 'Plaça de la Reina', 3, 20, 'Cykeltur genom Valencias historiska centrum.'),
+('Paella Cooking Class', 150, 55, 'Carrer del Mar', 3, 12, 'Lär dig laga originalpaellan från Valencia.'),
+('Beach Volleyball Session', 60, 10, 'Playa de la Malvarrosa', 3, 30, 'Volleyboll på stranden.'),
+('Seville Cathedral Tour', 90, 25, 'Av. de la Constitución', 4, 20, 'Besök världens största gotiska katedral.'),
+('Flamenco Night Show', 60, 35, 'Barrio de Triana', 4, 80, 'Autentisk flamencoshow.'),
+('Alcázar Palace Tour', 120, 30, 'Patio de Banderas', 4, 25, 'Upptäck Seville Alcázars palats och trädgårdar.'),
+('Guadalquivir River Cruise', 75, 18, 'Torre del Oro', 4, 50, 'Båtutflykt längs floden.'),
+('Colosseum & Forum Guided Tour', 180, 55, 'Piazza del Colosseo', 5, 25, 'Historisk rundtur i antika Rom.'),
+('Vatican Museums Tour', 150, 45, 'Viale Vaticano', 5, 20, 'Besök Sixtinska kapellet och Vatikanmuseerna.'),
+('Trastevere Food Tour', 120, 50, 'Trastevere', 5, 15, 'Smaka italienska delikatesser.'),
+('Trevi Fountain Photo Walk', 60, 15, 'Piazza di Trevi', 5, 30, 'Guidad fototur.'),
+('Duomo Rooftop Tour', 90, 28, 'Piazza del Duomo', 6, 20, 'Besök katedralens tak med panoramavy.'),
+('Fashion District Shopping Walk', 120, 0, 'Via Montenapoleone', 6, 15, 'Guidad modevandring.'),
+('Sforza Castle Museum Tour', 120, 25, 'Piazza Castello', 6, 25, 'Historisk rundtur i slottet.'),
+('Milan Aperitivo Experience', 90, 30, 'Navigli District', 6, 20, 'Italiensk aperitivo vid kanalerna.'),
+('Gondola Ride', 30, 80, 'Grand Canal', 7, 6, 'Klassisk gondoltur genom kanalerna.'),
+('St. Mark’s Basilica Tour', 90, 30, 'Piazza San Marco', 7, 20, 'Guidad tur i den ikoniska basilikan.'),
+('Murano Glassmaking Workshop', 120, 45, 'Isola di Murano', 7, 12, 'Lär dig glasblåsningens konst.'),
+('Rialto Market Food Tour', 120, 40, 'Rialto Market', 7, 15, 'Kulinarisk rundtur genom marknaden.'),
+('Uffizi Gallery Tour', 150, 35, 'Piazzale degli Uffizi', 8, 20, 'Guidad tur genom världsberömt museum.'),
+('Duomo Dome Climb', 90, 25, 'Piazza del Duomo', 8, 20, 'Klättra upp i Brunelleschis kupol.'),
+('Tuscany Wine Tasting', 180, 60, 'Chianti Region', 8, 20, 'Vinprovning på vingård utanför Florens.'),
+('Ponte Vecchio Walking Tour', 60, 15, 'Ponte Vecchio', 8, 30, 'Historisk rundtur över bron.'),
+('Eiffel Tower Summit Tour', 120, 45, 'Champ de Mars', 9, 25, 'Guidad tur till toppen av Eiffeltornet.'),
+('Seine River Cruise', 60, 18, 'Port de la Bourdonnais', 9, 100, 'Avkopplande båttur på Seine.'),
+('Louvre Museum Tour', 150, 40, 'Rue de Rivoli', 9, 20, 'Rundtur i världens största museum.'),
+('Montmartre Art Walk', 90, 20, 'Montmartre', 9, 20, 'Promenad i konstnärskvarteren.'),
+('Old Town Walking Tour', 90, 22, 'Vieux Nice', 10, 20, 'Guidad tur i den historiska stadsdelen.'),
+('Beach Kayaking', 60, 25, 'Promenade des Anglais', 10, 12, 'Kajakpaddling längs kusten.'),
+('Perfume Workshop', 120, 55, 'Grasse Factory', 10, 10, 'Skapa din egen parfym.'),
+('Sunset Coast Hike', 120, 15, 'Cap de Nice', 10, 25, 'Vacker vandring längs klipporna.'),
+('Fourvière Hill Tour', 90, 20, 'Basilique Notre-Dame de Fourvière', 11, 25, 'Historisk utsiktstur.'),
+('Lyon Gourmet Food Tour', 120, 45, 'Vieux Lyon', 11, 15, 'Provsmakning av lokala specialiteter.'),
+('Saône River Boat Tour', 75, 18, 'Quai de Saône', 11, 60, 'Båtutflykt genom Lyon.'),
+('Silk Weaving Workshop', 120, 40, 'Croix-Rousse', 11, 10, 'Lär dig traditionellt sidenhantverk.'),
+('Old Port Walking Tour', 90, 20, 'Vieux-Port', 12, 20, 'Historisk rundtur vid hamnen.'),
+('Calanques Boat Trip', 180, 55, 'Port de Marseille', 12, 60, 'Båttur till Calanques nationalpark.'),
+('Notre-Dame de la Garde Visit', 60, 12, 'Rue Fort du Sanctuaire', 12, 40, 'Besök Marseilles ikoniska basilika.'),
+('Local Seafood Tasting', 120, 48, 'Le Panier', 12, 15, 'Provsmakning av färska skaldjur.'),
+('Berlin Wall History Tour', 120, 25, 'Bernauer Strasse', 13, 25, 'Guidad tur kring Berlinmurens historia.'),
+('Museum Island Pass', 180, 40, 'Museum Island', 13, 50, 'Tillträde till flera museer.'),
+('Brandenburg Gate Night Walk', 60, 12, 'Pariser Platz', 13, 30, 'Kvällspromenad genom historiskt område.'),
+('Spree River Cruise', 75, 18, 'Schiffbauerdamm', 13, 80, 'Båtutflykt genom centrala Berlin.'),
+('Marienplatz Walking Tour', 90, 20, 'Marienplatz', 14, 25, 'Guidad stadsvandring.'),
+('Bavarian Beer Tasting', 120, 45, 'Hofbräuhaus', 14, 30, 'Smaka traditionella bayerska ölsorter.'),
+('English Garden Bike Ride', 120, 25, 'Englischer Garten', 14, 20, 'Cykeltur i stadens stora park.'),
+('Nymphenburg Palace Tour', 150, 30, 'Schloss Nymphenburg', 14, 20, 'Besök i storslaget palats.'),
+('Harbor Boat Tour', 75, 20, 'Landungsbrücken', 15, 100, 'Populär rundtur i hamnen.'),
+('Miniatur Wunderland Visit', 120, 28, 'Kehrwieder', 15, 60, 'Världens största modelljärnväg.'),
+('St. Pauli Nightlife Tour', 120, 30, 'Reeperbahn', 15, 30, 'Guidad rundtur i nöjesdistriktet.'),
+('Elbphilharmonie Plaza Visit', 60, 12, 'Platz der Deutschen Einheit', 15, 50, 'Utsikt från ikoniska konsertbyggnaden.'),
+('Cologne Cathedral Tour', 90, 20, 'Domkloster', 16, 25, 'Guidad tur i den berömda katedralen.'),
+('Rhine River Cruise', 75, 18, 'Konrad-Adenauer-Ufer', 16, 80, 'Båttur längs Rhen.'),
+('Chocolate Museum Tour', 120, 22, 'Am Schokoladenmuseum', 16, 30, 'Besök chokladmuseum med provsmakning.'),
+('Old Town Beer Walk', 120, 35, 'Altstadt', 16, 20, 'Rundtur med lokala ölsorter.');
+
+
+
+
+
+
+
+
+
+
+
+
+
+

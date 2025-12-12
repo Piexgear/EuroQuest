@@ -36,7 +36,13 @@ app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
 
 //activities
 app.MapGet("/activities", Activities.Get);
-app.MapGet("/activity/cities/{cityId}", Activities.GetCityActivity);
+app.MapGet("/activities/cities/{cityId}", Activities.GetCityActivity);
+
+//packages
+app.MapPost("/packages", async (Packages.Post_Data data, Config config)
+    => await Packages.Post(data, config));
+app.MapGet("/packages", async (Config config) => await Packages.GetAll(config));
+
 
 
 app.UseSession();
