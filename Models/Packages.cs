@@ -1,9 +1,11 @@
 namespace server;
 
 using MySql.Data.MySqlClient;
-
 class Packages
 {
+    //data models used to structure API input and output
+
+    //output model for package with hotel and activities
     public record PackageOutput(
     int PackageId,
     string Country,
@@ -12,6 +14,7 @@ class Packages
     List<ActivityOutput> Activities
     );
 
+    // output for hotel information 
     public record HotelOutput(
         string Name,
         string Description,
@@ -19,6 +22,7 @@ class Packages
         int CenterDistance
     );
 
+    //output model for activities inside a package
     public record ActivityOutput(
         string Name,
         string Description,
@@ -26,11 +30,46 @@ class Packages
         int Price
     );
 
+    //input model when creating a package 
+    //contains hotel id and list of activities
     public record Post_Data(int HotelId, List<int> ActivityId);
 
+    //create a package
     public static async Task<int> Post(Post_Data data, Config config)
     {
-        // insert package
+
+        //check if an identical package already exists
+        //a package is identical if:
+        //it has de same hotel id and it contains exactly the same activity ids, check with sum and count
+        string activityList = string.Join(",", data.ActivityId);
+
+        string checkQuery = """
+            SELECT p.id
+            FROM packages p
+            JOIN package_activities pa ON pa.package = p.id
+            WHERE p.hotel = @hotelId
+            GROUP BY p.id
+            HAVING
+                COUNT(pa.activity) = @activityCount 
+                AND SUM(pa.activity IN ({activityList})) = @activityCount;
+        """;
+
+        var checkParameters = new MySqlParameter[]
+        {
+            new("@hotelId", data.HotelId),
+            new("@activityCount", data.ActivityId.Count)
+        };
+
+        //execute query to see if an identical package exists
+        object? exisitingPackage = MySqlHelper.ExecuteScalar(config.db, checkQuery, checkParameters);
+
+        if (exisitingPackage != null)
+        {
+            //package already exists, return existing packageid
+            return Convert.ToInt32(exisitingPackage);
+        }
+
+        // insert package(hotel reference only)
         string insertPackageQuery = "INSERT INTO packages (hotel) VALUES (@hotelId)";
         var packageParameters = new MySqlParameter[]
         {
@@ -41,13 +80,13 @@ class Packages
             config.db,
             insertPackageQuery, packageParameters);
 
-        // get inserted package id
+        // retrieve the id of the newly created package
 
         int packageId = Convert.ToInt32(
             MySqlHelper.ExecuteScalar(config.db, "SELECT LAST_INSERT_ID()")
         );
 
-        // Insert activities
+        // Insert activities connected to the package
         string insertActivityQuery = "INSERT INTO package_activities (package, activity) VALUES (@package, @activity)";
 
         foreach (int activityId in data.ActivityId)
@@ -61,15 +100,17 @@ class Packages
             await MySqlHelper.ExecuteNonQueryAsync(config.db, insertActivityQuery, activityParameters);
         }
 
+        //return the id of the newly created package
         return packageId;
     }
 
     //get all packages with info
     public static async Task<List<PackageOutput>> GetAll(Config config)
     {
+        //dictionary to store packages(key = packageId)
         Dictionary<int, PackageOutput> packages = new();
 
-        // Hämta package, hotel, city, country
+        // Retrieve all packages with neccesary info 
         string hotelQuery = """
         SELECT 
             p.id AS packageId,
@@ -86,6 +127,7 @@ class Packages
         ORDER BY p.id;
     """;
 
+        //execute query and build package objects
         using (var reader = await MySqlHelper.ExecuteReaderAsync(
             config.db,
             hotelQuery))
@@ -101,17 +143,18 @@ class Packages
                     reader.GetInt32("center_distance")
                 );
 
+                //create a package entry in dictionary 
                 packages[packageId] = new PackageOutput(
                     packageId,
                     reader.GetString("country_name"),
                     reader.GetString("city_name"),
                     hotel,
-                    new List<ActivityOutput>()
+                    new List<ActivityOutput>() //empty list, activities added later
                 );
             }
         }
 
-        //hämta aktiviteterna för varje paket
+        //retrieve activities for all packages
 
         string activitiesQuery = """
         SELECT 
@@ -132,6 +175,7 @@ class Packages
             {
                 int packageId = reader.GetInt32("packageId");
 
+                //add each activity to the correct package
                 if (packages.TryGetValue(packageId, out var package))
                 {
                     package.Activities.Add(new ActivityOutput(
@@ -144,6 +188,7 @@ class Packages
             }
         }
 
+        //convert dictionary to list and return 
         return packages.Values.ToList();
     }
 
