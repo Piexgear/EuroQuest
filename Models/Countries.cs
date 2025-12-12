@@ -41,6 +41,7 @@ class Countries
                 result = new(reader.GetString(0));
             }
         }
+        
         return result;
     }
 }

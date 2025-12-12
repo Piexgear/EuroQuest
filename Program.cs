@@ -15,12 +15,20 @@ builder.Services.AddSession(options =>
 var app = builder.Build();
 //users 
 app.MapGet("/users", Users.Get);
-app.MapGet("/profile", Profile.Get);
+app.MapGet("/users/{id}", Users.GetById);
+app.MapDelete("/users/{id}", Users.Delete);
+app.MapPost("/users", Users.Post);
 app.MapPost("/login", Login.Post);
+
+// Ej katogeriserat 
 app.MapDelete("/login", Login.Delete);   //kan vara onödiga eventuellt ta bort 
 app.MapDelete("/users{id}", Users.Delete);  // -|| -
 app.MapGet("/users/{id}", Users.GetById);  // - || -
 
+app.MapGet("/profile", Profile.Get);
+app.MapGet("/bookings", Bookings.GetBookings);
+
+app.MapGet("/bookings/user", Bookings.GetByUser_data); 
 
 //countries
 app.MapGet("/countries", Countries.Get);
