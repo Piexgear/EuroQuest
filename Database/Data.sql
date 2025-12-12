@@ -4,7 +4,7 @@ INSERT INTO users (name, email, password, role) VALUES
 ('Jonathan Lopez', 'jonathan@hotmail.com', 'password123', 'customer'),
 ('Jenjira Phayakhruea', 'jenjira@ehotmail.com', 'password123', 'customer'),
 ('Gustav Fransson', 'gustav@hotmail.com', 'password456', 'customer'),
-('Lina Hallgergren', 'Lina@hotmail.com', 'password456', 'customer'),
+('Lina Hallgergren', 'lina@hotmail.com', 'password456', 'customer'),
 ('John Doe', 'john@hotmail.com', 'password456', 'customer'),
 ('Admin ', 'admin', 'admin', 'admin');
 
@@ -260,6 +260,22 @@ INSERT INTO rooms (number, hotel, capacity, price) VALUES
 (1,59,2,110),(2,59,2,110),(3,59,2,110),(4,59,2,110),(5,59,2,110),
 (6,59,2,110),(7,59,2,110),(8,59,2,110),(9,59,2,130),(10,59,2,130);
 
+
+INSERT INTO packages (hotel)
+VALUES 
+(1),
+(2),
+(3);
+
+
+INSERT INTO bookings (package, user, check_in, check_out, guests)
+VALUES
+(1, 1, '2025-06-10', '2025-06-17', 2),
+(2, 3, '2025-07-01', '2025-07-08', 4),
+(1, 2, '2025-05-15', '2025-05-22', 1),
+(3, 4, '2025-08-12', '2025-08-19', 2),
+(2, 1, '2025-09-05', '2025-09-12', 3);
+    
 
 INSERT INTO activities (name, duration, price, address, city, capacity, description) VALUES
 ('Guided Tour: Sagrada Familia', 120, 40, 'Carrer de Mallorca', 1, 20, 'Guidad tur i Gaudis mästerverk.'),
