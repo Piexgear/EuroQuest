@@ -261,11 +261,11 @@ INSERT INTO rooms (number, hotel, capacity, price) VALUES
 (6,59,2,110),(7,59,2,110),(8,59,2,110),(9,59,2,130),(10,59,2,130);
 
 
-INSERT INTO packages (hotel)
+INSERT INTO packages (hotel, created_by)
 VALUES 
-(1),
-(2),
-(3);
+(1, 1),
+(2, 1),
+(3, 2);
 
 
 INSERT INTO bookings (package, user, check_in, check_out, guests)
