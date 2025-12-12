@@ -50,9 +50,9 @@ class Bookings
             ORDER BY b.id, r.number;
         """;
 
-       using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
-            while(reader.Read())
+            while (reader.Read())
             {
                 result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
@@ -124,17 +124,17 @@ class Bookings
         };
 
         // runs SQL question asynct and gets a reader that reades line for line
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
         {
             // reads every line in the result
-            while(reader.Read())
+            while (reader.Read())
             {
                 result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
         // return a list with all bookings for the user
-        return result;  
+        return result;
     }
 
 
@@ -152,7 +152,7 @@ class Bookings
         );
 
 
-    // Hämtar bokningsdata från databasen
+        // Hämtar bokningsdata från databasen
         public static async Task<List<Get_Data>> Get(Config config)
         {
             // Skapar en tom lista som ska fyllas med Get_Data objekt
@@ -270,7 +270,7 @@ class Bookings
             WHERE id = @id;
             ";
 
-    // Skapar en lista med parametrar som matchar @ värden i SQL queryn
+            // Skapar en lista med parametrar som matchar @ värden i SQL queryn
             var updateParams = new MySqlParameter[]
             {
                 // ID på bokningen som ska uppdateras

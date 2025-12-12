@@ -13,6 +13,7 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+app.UseSession();
 //users 
 app.MapGet("/users", Users.Get);
 app.MapGet("/users/{id}", Users.GetById);
@@ -28,7 +29,7 @@ app.MapGet("/users/{id}", Users.GetById);  // - || -
 app.MapGet("/profile", Profile.Get);
 app.MapGet("/bookings", Bookings.GetBookings);
 
-app.MapGet("/bookings/user", Bookings.GetByUser_data); 
+app.MapGet("/bookings/user", Bookings.GetByUser_data);
 
 //countries
 app.MapGet("/countries", Countries.Get);
@@ -44,10 +45,13 @@ app.MapGet("/hotels/cities/{cityId}", Hotels.GetCityHotels);
 
 //activities
 app.MapGet("/activities", Activities.Get);
-app.MapGet("/activity/cities/{cityId}", Activities.GetCityActivity);
+app.MapGet("/activities/cities/{cityId}", Activities.GetCityActivity);
 
+//packages
+app.MapPost("/packages", async (Packages.Post_Data data, Config config, HttpContext ctx)
+    => await Packages.Post(data, config, ctx));
+app.MapGet("/packages", Packages.GetAll);
 
-app.UseSession();
 app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
