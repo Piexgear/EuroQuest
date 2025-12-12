@@ -36,9 +36,11 @@ class Users
 
 
     public record GetById_Data(string Email);
-    public static async Task<GetById_Data?> GetById(int id, Config config)
+    public static async Task<GetById_Data?> GetById(int id, Config config, HttpContext ctx)
     {
-        GetById_Data? result = null;
+        if (ctx.Session.GetString("role") == "admin")
+        {
+            GetById_Data? result = null;
         string query = "SELECT email, FROM users WHERE id = @id";
         var parameters = new MySqlParameter[] { new("@id", id) };
 
@@ -51,14 +53,21 @@ class Users
         }
 
         return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
 
     public record Post_Args(string Name, string Email, string Password);
-    public static async Task Post(Post_Args user, Config config)
+    public static async Task Post(Post_Args user, Config config, HttpContext ctx)
     {
-        string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
+        if (ctx.Session.GetString("role") == "admin")
+        {
+            string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
 
         //indexerar själv för inmatning av data 
         var parameters = new MySqlParameter[]
@@ -70,6 +79,7 @@ class Users
         };
 
         await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
+        }
     }
 
     public static async Task Delete(int id, Config config)
