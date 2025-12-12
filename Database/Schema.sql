@@ -1,4 +1,3 @@
-
 CREATE DATABASE EuroQuest;
 
 USE EuroQuest;

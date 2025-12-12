@@ -4,7 +4,7 @@ INSERT INTO users (name, email, password, role) VALUES
 ('Jonathan Lopez', 'jonathan@hotmail.com', 'password123', 'customer'),
 ('Jenjira Phayakhruea', 'jenjira@ehotmail.com', 'password123', 'customer'),
 ('Gustav Fransson', 'gustav@hotmail.com', 'password456', 'customer'),
-('Lina Hallgergren', 'Lina@hotmail.com', 'password456', 'customer'),
+('Lina Hallgergren', 'lina@hotmail.com', 'password456', 'customer'),
 ('John Doe', 'john@hotmail.com', 'password456', 'customer'),
 ('Admin ', 'admin', 'admin', 'admin');
 
@@ -140,7 +140,7 @@ INSERT INTO hotels (name, city, amount_of_rooms, description, beach_distance, po
 ('Old Town Cologne Hotel', 16, 10, 'Historic area.', 9999, 0, 1, 300),
 ('Cologne Central Station Suites', 16, 10, 'Convenient location.', 9999, 1, 1, 150);
 
-INSERT INTO rooms (number, hotels_id, capacity, price) VALUES
+INSERT INTO rooms (number, hotel, capacity, price) VALUES
 (1,1,2,145),(2,1,2,145),(3,1,2,145),(4,1,2,145),(5,1,2,145),
 (6,1,2,145),(7,1,2,145),(8,1,2,145),(9,1,2,145),(10,1,2,145),
 (1,2,2,150),(2,2,2,150),(3,2,2,150),(4,2,2,150),(5,2,2,150),
@@ -260,6 +260,22 @@ INSERT INTO rooms (number, hotels_id, capacity, price) VALUES
 (1,59,2,110),(2,59,2,110),(3,59,2,110),(4,59,2,110),(5,59,2,110),
 (6,59,2,110),(7,59,2,110),(8,59,2,110),(9,59,2,130),(10,59,2,130);
 
+
+INSERT INTO packages (hotel, created_by)
+VALUES 
+(1, 1),
+(2, 1),
+(3, 2);
+
+
+INSERT INTO bookings (package, user, check_in, check_out, guests)
+VALUES
+(1, 1, '2025-06-10', '2025-06-17', 2),
+(2, 3, '2025-07-01', '2025-07-08', 4),
+(1, 2, '2025-05-15', '2025-05-22', 1),
+(3, 4, '2025-08-12', '2025-08-19', 2),
+(2, 1, '2025-09-05', '2025-09-12', 3);
+    
 
 INSERT INTO activities (name, duration, price, address, city, capacity, description) VALUES
 ('Guided Tour: Sagrada Familia', 120, 40, 'Carrer de Mallorca', 1, 20, 'Guidad tur i Gaudis mästerverk.'),
