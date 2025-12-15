@@ -2,6 +2,8 @@
 namespace server;
 
 using MySql.Data.MySqlClient;
+using Mysqlx;
+using MySqlX.XDevAPI.Common;
 
 class Users
 {
@@ -9,8 +11,10 @@ class Users
     static List<Hotels> hotel = new();
 
     public record Get_Data(int Id, string Name, string Email, string Password);
-    public static async Task<List<Get_Data>> Get(Config config)
+    public static async Task<List<Get_Data>> Get(Config config, HttpContext ctx)
     {
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
+        {
         List<Get_Data> result = new();
         string query = "SELECT id, name, email, password FROM users";
         using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
@@ -25,13 +29,20 @@ class Users
             }
         }
         return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
     public record GetById_Data(string Email);
-    public static async Task<GetById_Data?> GetById(int id, Config config)
+    public static async Task<GetById_Data?> GetById(int id, Config config, HttpContext ctx)
     {
-        GetById_Data? result = null;
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
+        {
+            GetById_Data? result = null;
         string query = "SELECT email, FROM users WHERE id = @id";
         var parameters = new MySqlParameter[] { new("@id", id) };
 
@@ -44,14 +55,21 @@ class Users
         }
 
         return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
 
     public record Post_Args(string Name, string Email, string Password);
-    public static async Task Post(Post_Args user, Config config)
+    public static async Task Post(Post_Args user, Config config, HttpContext ctx)
     {
-        string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
+        {
+            string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
 
         //indexerar själv för inmatning av data 
         var parameters = new MySqlParameter[]
@@ -63,6 +81,7 @@ class Users
         };
 
         await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
+        }
     }
 
     public static async Task Delete(int id, Config config)
