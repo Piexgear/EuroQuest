@@ -10,8 +10,10 @@ class Bookings
 
     // Visa vilka bokningar användara har!   ADMIN VIEW 
     public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
-    public static async Task<List<Get_Data>> GetBookings(Config config)
+    public static async Task<List<Get_Data>> GetBookings(Config config, HttpContext ctx)
     {
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
+        {
         List<Get_Data> result = new();
         string query = """
             SELECT 
@@ -27,7 +29,7 @@ class Bookings
             FROM bookings b
             
             JOIN users u 
-            ON b.users = u.id
+            ON b.user = u.id
 
             JOIN packages p 
             ON b.package = p.id
@@ -59,6 +61,11 @@ class Bookings
             }
         }
         return result;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
