@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 
 class Activities
 {
+    static List<Activities> activities = new();
     public record Get_Data(
         int Id,
         string Name,
@@ -38,6 +39,34 @@ class Activities
             }
         }
 
+        return result;
+    }
+
+    public static async Task<List<Get_Data>> GetCityActivity(int cityId, Config config)
+    {
+        List<Get_Data> result = new();
+        string query = "SELECT id, name, duration, price, address, description FROM activity WHERE city = @cityId";
+        var parameters = new MySqlParameter[]
+        {
+            new ("@cityId", cityId),
+        };
+
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
+        {
+            while (reader.Read())
+            {
+                result.Add(new(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetInt32(2),
+                    reader.GetInt32(3),
+                    reader.GetString(4),
+                    reader.GetInt32(5),
+                    reader.GetInt32(6),
+                    reader.GetString(7)
+                ));
+            }
+        }
         return result;
     }
 }

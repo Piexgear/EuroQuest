@@ -15,11 +15,33 @@ class Countries
         {
             while (reader.Read())
             {
-                result.Add(new(
-                    reader.GetInt32(0),
-                    reader.GetString(1)));
+                result.Add(new(reader.GetInt32(0), reader.GetString(1)));
             }
         }
+        return result;
+    }
+
+
+
+    public record PostById_Data(string Name);
+    public static async Task<PostById_Data?>
+    PostById(int id, Config config)
+    {
+        PostById_Data? result = null;
+        string queryid = "SELECT country_name FROM country WHERE id = @id";
+        var parameters = new MySqlParameter[]
+        {
+            new ("@id", id),
+        };
+
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, queryid, parameters))
+        {
+            while (reader.Read())
+            {
+                result = new(reader.GetString(0));
+            }
+        }
+        
         return result;
     }
 }
