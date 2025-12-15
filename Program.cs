@@ -23,17 +23,15 @@ app.MapPost("/login", Login.Post);
 
 // Ej katogeriserat 
 app.MapDelete("/login", Login.Delete);   //kan vara onödiga eventuellt ta bort 
-app.MapDelete("/users{id}", Users.Delete);  // -|| -
-app.MapGet("/users/{id}", Users.GetById);  // - || -
 
 app.MapGet("/profile", Profile.Get);
-app.MapGet("/bookings", Bookings.GetBookings);
 
+//Bookings
+app.MapGet("/bookings", Bookings.GetBookings);
 app.MapGet("/bookings/user", Bookings.GetByUser_data);
 
 //countries
 app.MapGet("/countries", Countries.Get);
-app.MapPost("/countries/{id}", Countries.PostById);
 
 //cities
 app.MapGet("/cities", Cities.Get);
@@ -135,8 +133,8 @@ async Task db_reset_to_default(Config config)
     );
     """;
 
-    string packages_activities_create = """
-    CREATE TABLE IF NOT EXISTS packages_activities (
+    string package_activities_create = """
+    CREATE TABLE IF NOT EXISTS package_activities (
         package_id INTEGER NOT NULL,
         activity_id INTEGER NOT NULL,
         PRIMARY KEY(package_id, activity_id)
@@ -155,8 +153,8 @@ async Task db_reset_to_default(Config config)
     );
     """;
 
-    string rooms_bookings_create = """
-    CREATE TABLE IF NOT EXISTS rooms_bookings (
+    string room_bookings_create = """
+    CREATE TABLE IF NOT EXISTS room_bookings (
         booking_id INTEGER NOT NULL,
         room_id INTEGER NOT NULL,
         PRIMARY KEY(booking_id, room_id)
@@ -169,12 +167,12 @@ async Task db_reset_to_default(Config config)
     ALTER TABLE rooms ADD FOREIGN KEY(hotels_id) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE activities ADD FOREIGN KEY(city) REFERENCES cities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE packages ADD FOREIGN KEY(hotel_id) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE packages_activities ADD FOREIGN KEY(package_id) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE packages_activities ADD FOREIGN KEY(activity_id) REFERENCES activities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE package_activities ADD FOREIGN KEY(package_id) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE package_activities ADD FOREIGN KEY(activity_id) REFERENCES activities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE bookings ADD FOREIGN KEY(package_id) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE bookings ADD FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE rooms_bookings ADD FOREIGN KEY(booking_id) REFERENCES bookings(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE rooms_bookings ADD FOREIGN KEY(room_id) REFERENCES rooms(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE room_bookings ADD FOREIGN KEY(booking_id) REFERENCES bookings(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE room_bookings ADD FOREIGN KEY(room_id) REFERENCES rooms(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     """;
 
 
@@ -189,15 +187,9 @@ async Task db_reset_to_default(Config config)
     await MySqlHelper.ExecuteNonQueryAsync(config.db, rooms_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, activities_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, packages_create);
-    await MySqlHelper.ExecuteNonQueryAsync(config.db, packages_activities_create);
+    await MySqlHelper.ExecuteNonQueryAsync(config.db, package_activities_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, bookings_create);
-    await MySqlHelper.ExecuteNonQueryAsync(config.db, rooms_bookings_create);
+    await MySqlHelper.ExecuteNonQueryAsync(config.db, room_bookings_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, foreign_keys);
 
-    await MySqlHelper.ExecuteNonQueryAsync(config.db,
-        "DELETE FROM users WHERE email='david@email.com';");
-
-    // Insert test user
-    await MySqlHelper.ExecuteNonQueryAsync(config.db,
-        "INSERT INTO users(email, password) VALUES ('david@email.com','password123');");
 }

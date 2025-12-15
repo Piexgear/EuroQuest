@@ -4,7 +4,6 @@ using MySql.Data.MySqlClient;
 
 class Activities
 {
-    static List<Activities> activities = new();
     public record Get_Data(
         int Id,
         string Name,

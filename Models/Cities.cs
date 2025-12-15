@@ -4,7 +4,6 @@ using MySql.Data.MySqlClient;
 
 class Cities
 {
-    // static List<Hotels> hotel = new();
 
     public record Get_Data(int Id, string City, int CountryId);
     public record GetById_Data(int Id, string Name);
