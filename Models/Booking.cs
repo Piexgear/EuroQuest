@@ -7,7 +7,6 @@ class Bookings
 {
     static List<Bookings> booking = new();
 
-
     // Visa vilka bokningar användara har!   ADMIN VIEW 
     public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, DateTime CheckIn, DateTime CheckOut, int guests);
     public static async Task<List<Get_Data>> GetBookings(Config config)
