@@ -2,6 +2,7 @@
 namespace server;
 
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 
 class Users
 {
@@ -11,7 +12,7 @@ class Users
     public record Get_Data(int Id, string Name, string Email, string Password);
     public static async Task<List<Get_Data>> Get(Config config, HttpContext ctx)
     {
-        if (ctx.Session.GetString("role") == "admin")
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
         List<Get_Data> result = new();
         string query = "SELECT id, name, email, password FROM users";
@@ -38,7 +39,7 @@ class Users
     public record GetById_Data(string Email);
     public static async Task<GetById_Data?> GetById(int id, Config config, HttpContext ctx)
     {
-        if (ctx.Session.GetString("role") == "admin")
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
             GetById_Data? result = null;
         string query = "SELECT email, FROM users WHERE id = @id";
@@ -65,7 +66,7 @@ class Users
     public record Post_Args(string Name, string Email, string Password);
     public static async Task Post(Post_Args user, Config config, HttpContext ctx)
     {
-        if (ctx.Session.GetString("role") == "admin")
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
             string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
 
