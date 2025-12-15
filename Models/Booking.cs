@@ -1,12 +1,9 @@
 namespace server;
 
-using System.Security.Cryptography.X509Certificates;
 using MySql.Data.MySqlClient;
 
 class Bookings
 {
-    static List<Bookings> booking = new();
-
 
     // Visa vilka bokningar användara har!   ADMIN VIEW 
     public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
@@ -56,7 +53,7 @@ class Bookings
         {
             while (reader.Read())
             {
-                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
+                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
@@ -100,7 +97,7 @@ class Bookings
             FROM bookings b
             
             JOIN users u 
-            ON b.users = u.id
+            ON b.user = u.id
 
             JOIN packages p 
             ON b.package = p.id
@@ -136,7 +133,7 @@ class Bookings
             // reads every line in the result
             while (reader.Read())
             {
-                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
+                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
