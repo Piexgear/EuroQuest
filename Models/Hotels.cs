@@ -4,7 +4,6 @@ using MySql.Data.MySqlClient;
 
 class Hotels
 {
-    static List<Hotels> hotel = new();
 
     public record Get_Data(int Id, string HotelName, string Description, int Beachdistance);
     public static async Task<List<Get_Data>> Get(Config config)

@@ -2,13 +2,11 @@
 namespace server;
 
 using MySql.Data.MySqlClient;
-using Mysqlx;
-using MySqlX.XDevAPI.Common;
+
 
 class Users
 {
     static List<User> users = new();
-    static List<Hotels> hotel = new();
 
     public record Get_Data(int Id, string Name, string Email, string Password);
     public static async Task<List<Get_Data>> Get(Config config, HttpContext ctx)

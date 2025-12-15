@@ -1,12 +1,9 @@
 namespace server;
 
-using System.Security.Cryptography.X509Certificates;
 using MySql.Data.MySqlClient;
 
 class Bookings
 {
-    static List<Bookings> booking = new();
-
 
     // Visa vilka bokningar användara har!   ADMIN VIEW 
     public record Get_Data(int BookingId, string Customer, string Country, string City, string Hotel, int Rooms, DateTime CheckIn, DateTime CheckOut, int guests);
