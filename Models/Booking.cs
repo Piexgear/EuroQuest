@@ -52,11 +52,11 @@ class Bookings
             ORDER BY b.id, r.number;
         """;
 
-       using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
         {
-            while(reader.Read())
+            while (reader.Read())
             {
-                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
+                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
@@ -69,24 +69,23 @@ class Bookings
     }
 
 
-
-    // Detta blocket är för att se bookningar för den inloggade användaren och det är som en lista för att man ska kunna ha fler bokningar per användare
+    // this block is to view booking for the logged in user and not any other, The reason for it to be a list is because one user can have many bookings.
     public record GetByUser_Data(int UserId);
     public static async Task<List<Get_Data>> GetByUser_data(Config config, HttpContext ctx)
     {
-        // hämtar användarens ID från sessionen. Blir null om ingen är inloggad
+        // get the users ID from the ongoing session, If there is no session the result is null.
         int? userid = ctx.Session.GetInt32("user_id");
 
-        // ifall sessionen inte är tillgänglig (inte inloggad/ inte laddad) returnera null
+        // if the session is not avalible (not logged in/ not loaded) reurn null 
         if (!ctx.Session.IsAvailable)
         {
             return null;
         }
 
-        // skapa en lista som ska fyllas med bokningsdata och returneras 
+        // create a list that will be filled with the booking data and get returned.
         List<Get_Data> result = new();
 
-        // SQL fråga som hämtar alla bokningar för den aktuella användaren
+        // SQL question that gets all bookings for the active user
         string query = """
             SELECT 
             b.id AS booking_id,
@@ -125,26 +124,24 @@ class Bookings
             ORDER BY b.id, r.number;
         """;
 
-        // skapar en parameter array med user_id som skickas till SQL-frågan 
+        // create an array parameters with user_id that gets sent in sql question
         var parameters = new MySqlParameter[]
         {
             new("@user_id", userid)
         };
 
-        // kör SQL-frågan asynkront och får tillbaka en reader som kan läsa rad för rad
-        using(var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
+        // runs SQL question asynct and gets a reader that reades line for line
+        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
         {
-            // läs igenom varje rad i resultatet
-            while(reader.Read())
+            // reads every line in the result
+            while (reader.Read())
             {
-                // skapar ett nytt Get_Data-objekt för varje rad och lägger det i result-listan
-                // reader.IsDBNull(5) används för att undvika krasch om rum saknas
-                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? 0 : reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
+                result.Add(new Get_Data(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDateTime(6), reader.GetDateTime(7), reader.GetInt32(8)
                 ));
             }
         }
-        // returnerar listan med alla bokningar för användaren
-        return result;  
+        // return a list with all bookings for the user
+        return result;
     }
 
 
@@ -162,7 +159,7 @@ class Bookings
         );
 
 
-    // Hämtar bokningsdata från databasen
+        // Hämtar bokningsdata från databasen
         public static async Task<List<Get_Data>> Get(Config config)
         {
             // Skapar en tom lista som ska fyllas med Get_Data objekt
@@ -280,7 +277,7 @@ class Bookings
             WHERE id = @id;
             ";
 
-    // Skapar en lista med parametrar som matchar @ värden i SQL queryn
+            // Skapar en lista med parametrar som matchar @ värden i SQL queryn
             var updateParams = new MySqlParameter[]
             {
                 // ID på bokningen som ska uppdateras

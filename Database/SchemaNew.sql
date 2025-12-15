@@ -58,9 +58,12 @@ CREATE TABLE IF NOT EXISTS `activities` (
 );
 
 CREATE TABLE IF NOT EXISTS `packages` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `hotel` INTEGER NOT NULL,
-    PRIMARY KEY(`id`)
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `hotel` INT NOT NULL,
+    `created_by` INT,
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_packages_created_by
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) 
 );
 
 CREATE TABLE IF NOT EXISTS `package_activities` (
