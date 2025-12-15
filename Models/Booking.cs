@@ -97,7 +97,7 @@ class Bookings
             FROM bookings b
             
             JOIN users u 
-            ON b.users = u.id
+            ON b.user = u.id
 
             JOIN packages p 
             ON b.package = p.id
