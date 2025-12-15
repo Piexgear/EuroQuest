@@ -32,7 +32,6 @@ class Users
         }
         else
         {
-            System.Console.WriteLine("Error: faulty input or lacking privileges");
             return null;
         }
     }
@@ -59,7 +58,6 @@ class Users
         }
         else
         {
-            System.Console.WriteLine("Error: faulty input or lacking privileges");
             return null;
         }
     }
@@ -83,10 +81,6 @@ class Users
         };
 
         await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
-        }
-        else
-        {
-            System.Console.WriteLine("Error: faulty input or lacking privileges");
         }
     }
 
