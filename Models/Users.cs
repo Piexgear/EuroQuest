@@ -61,32 +61,55 @@ class Users
     }
 
 
-
-    public record Post_Args(string Name, string Email, string Password);
+    // Create new user in table users, only users with the role admin can create new users with the role admin.
+    // People without admin creating new users default to customer
+    public record Post_Args(string Name, string Email, string Password, string Role);
     public static async Task Post(Post_Args user, Config config, HttpContext ctx)
     {
         if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
-            string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
+            string querry = "INSERT INTO users(name, email, password, role) VALUES(@name, @email, @password, @role)";
 
             //indexerar själv för inmatning av data 
             var parameters = new MySqlParameter[]
             {
-            new("@email", user.Email),
-            new("@name", user.Name),
-            new("@password", user.Password),
+                new("@email", user.Email),
+                new("@name", user.Name),
+                new("@password", user.Password),
+                new("@role", user.Role)
 
             };
 
             await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
         }
+        else
+        {
+            string querry = "INSERT INTO users(name, email, password, role) VALUES(@name, @email, @password, @role)";
+
+            //indexerar själv för inmatning av data 
+            var parameters = new MySqlParameter[]
+            {
+                new("@email", user.Email),
+                new("@name", user.Name),
+                new("@password", user.Password),
+                new("@role", "customer")
+
+            };
+
+            await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
+        }
+    
     }
 
-    public static async Task Delete(int id, Config config)
+    // Delete User from database table users, only available to be used by users with the admin role
+    public static async Task Delete(int id, Config config, HttpContext ctx)
     {
+        if (ctx.Session.GetString("role") == Role.admin.ToString())
+        {
         string query = "DELETE FROM users WHERE id = @id";
         var parameters = new MySqlParameter[] { new("@id", id) };
         await MySqlHelper.ExecuteNonQueryAsync(config.db, query, parameters);
+        }
     }
 
 }
