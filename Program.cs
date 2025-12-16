@@ -29,6 +29,9 @@ app.MapGet("/profile", Profile.Get);
 //Bookings
 app.MapGet("/bookings", Bookings.GetBookings);
 app.MapGet("/bookings/user", Bookings.GetByUser_data);
+app.MapPut("/bookings/guests", Bookings.SetGuests);
+app.MapPost("/bookings/{bookingId}", Bookings.Update);
+app.MapDelete("/bookings/cancel", Bookings.Cancel);
 
 //countries
 app.MapGet("/countries", Countries.Get);

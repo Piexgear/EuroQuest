@@ -1,5 +1,6 @@
 namespace server;
 
+using System.Reflection.Metadata;
 using MySql.Data.MySqlClient;
 
 class Bookings
@@ -143,153 +144,109 @@ class Bookings
 
 
 
-    // Class för antal gäster som användaren väljer
-    class AmountOfPeople
+    // This block is for user to be able to choose how many guests they are
+    public record SetGuests_Data(int BookingId, int Guests);
+
+    public static async Task SetGuests(SetGuests_Data data, Config config)    // POST method: sets the number of guests for a booking
     {
-        public record Get_Data(
-            int Id,               // bookings ID 
-            int Package,          // Paket - ID kopplat till bokningen
-            int User,             // Användarens ID
-            DateOnly CheckIn,     // Datum för incheckning
-            DateOnly CheckOut,    // Datum för utcheckning
-            int Guests            // Antal gäster i bokningen
-        );
+        if (data.Guests < 1 || data.Guests > 10)   // Validate that the number of guests is between 1 to 10
+            throw new Exception("Amount of guests must be between 1 -10");
 
+        const string query = @"
+            UPDATE booking
+            SET guests = @guests
+            WHERE id = @bookingId;
+            ";   // SQL query that updates the guests column for a specific booking
 
-        // Hämtar bokningsdata från databasen
-        public static async Task<List<Get_Data>> Get(Config config)
+        var parameters = new MySqlParameter[]   // SQL parameters to prevent SQL injection
         {
-            // Skapar en tom lista som ska fyllas med Get_Data objekt
-            List<Get_Data> result = new();
+                new("@guests", data.Guests),   // Sets the new guest count
+                new("@bookingId", data.BookingId)   // specifies which booking to update
+        };
 
-            // SQL fråga som hämtar nödvändiga kolumner från bookings tabellen
-            string query = "SELECT id, package, user, check_in, check_out, guests FROM bookings";
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, query, parameters);   // Execute the UPDATE query
 
-            // Kör SQL frågan och får tillbaka en reader som läser rad för rad
-            using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
-            {
-                // Loopa igenom varje rad i resultatet
-                while (reader.Read())
-                {
-                    // Lägger till ett nytt Get_Data objekt i listan
-                    result.Add(new(
-                        reader.GetInt32(0),   // Läser ID (kolumn 0)
-                        reader.GetInt32(1),   // Läser PackageID (kolumn 1)
-                        reader.GetInt32(2),   // Läser UserID (kolumn 2)
-                        DateOnly.FromDateTime(reader.GetDateTime(3)),     // Konverterar check_in från DateTime --> DateOnly
-                        DateOnly.FromDateTime(reader.GetDateTime(4)),     // Konverterar check_out från DateTime --> DateOnly 
-                        reader.GetInt32(5)    // Läser antal gäster (kolumn 5)
-                    ));
-                }
-            }
-            // Returnerar listan med alla hämtade bokningar
-            return result;
-        }
+        if (rows == 0)   // If no rows were updated, the booking ID does not exist
+            throw new Exception("No booking was updated");
     }
 
 
-    // Class för att kunna avboka och FÖRHOPPNINGSVIS spara avbokade i vår package
-    class CancelBooking
+    // This block is for cancelling a booking
+    public record Cancel_Data(int BookingId);
+
+    public static async Task Cancel(Cancel_Data data, Config config)   // DELETE method: should mark as cancelled
     {
-        // public metod som körs när användaren avbokar en bokning
-        // bookingId = vilken bokning som ska avbokas
-        // config = databas - inställningar (connection string)
-        public static async Task Delete(int bookingId, Config config)
+        const string CancelQuery = @"
+        UPDATE bookings
+        SET is_cancelled = 1
+        WHERE id = @bookingId;
+        ";   // SQL query that marks the booking as cancelled instead of deleting it
+
+        var parameters = new MySqlParameter[]    // SQL parameters for the booking ID 
         {
-            // ==================================
-            //  1. Markerar bokning som avbokad
-            // ==================================
+            new("@bookingId", data.BookingId)
+        };
 
-            // SQL query som ändrar bokningen så att den är satt på avbokad
-            // men den raderas INTE från databasen
-            const string cancelBookingQuery = "UPDATE bookings SET is_cancelled = 1 WHERE id = @bookingId";
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, CancelQuery, parameters);    // Execute the UPDATE query
 
-            // Skapar en parameterlista till query
-            // Här binder vi värdet bookingId till @bookingId i SQL
-            var cancelParams = new MySqlParameter[]
-            {
-                new("@bookingId", bookingId)
-            };
-
-            // Kör SQL kommandot mot databasen 
-            // ExecuteNonQueryAsync används för UPDATE/DELETE 
-            await MySqlHelper.ExecuteNonQueryAsync(config.db, cancelBookingQuery, cancelParams);  // 1. config.db = databas connection. 2. cancelBookingQuery = SQL kod.  3. cancelParams = Parametrar
-
-
-            // =================================================================
-            //  2. Tar bort rumsbokningar (FRIVILLIGT)
-            // =================================================================
-
-            // Detta gör att rummet blir lediga igen.
-            // Själva bokningen finns kvar i bookings tabellen
-            // men kopplingen till bokade rum tas bort
-            const string deleteRoomBookingQuery = "DELETE FROM room_booking WHERE booking = @bookingId";
-
-            // Parametrar för att koppla värdet bookingId till SQL
-            var roomParams = new MySqlParameter[]
-            {
-                new("@bookingId", bookingId)
-            };
-
-            // Kör DELETE på room_booking så rummen frigörs
-            await MySqlHelper.ExecuteNonQueryAsync(config.db, deleteRoomBookingQuery, roomParams);
+        if (rows == 0)    // If no rows were updated, the booking was not found
+        {
+            throw new Exception("No booking was found with the ID");
         }
     }
 
+    // This block is for changes/updates on booking
+    public record Update_Data(
+    int BookingId,
+    DateOnly NewCheckIn,
+    DateOnly NewCheckOut,
+    int NewGuests
+    );
 
-
-    // ==================================================================================
-    // Class: ChangeBooking
-    // Låta användaren ändra sin befintliga bokning (paket, datum och antal gäster)
-    // ===================================================================================
-    class ChangeBooking
+    public static async Task Update(Update_Data data, Config config)    // PUT method: updates dates and guests for a booking
     {
+        if (data.NewGuests < 1 || data.NewGuests > 10)    // validates number of guests
+            throw new Exception("Amount of guests must be between 1 - 10");
 
-        // -------------------------------------------------------
-        // 1. Record som beskriver vilka ändringar användaren gör
-        // -------------------------------------------------------
-        public record Change_Data(
-            int BookingId,            // ID på bokningen som ska ändras 
-            int NewPackageId,         // Nytt paket (package_id)
-            DateOnly NewCheckIn,      // Nytt datum för check in
-            DateOnly NewCheckOut,     // Nytt datum för check out
-            int NewGuests             // Nytt antal gäster
-        );
+        if (data.NewCheckIn >= data.NewCheckOut)   // validates that check in is before check out
+            throw new Exception("check-in must be before check-out");
 
-        // -------------------------------------------------------------------
-        // Metod som uppdaterar bokningen i databasen
-        // data = alla nya värden
-        // config = innehåller connection string (config.db)
-        // -------------------------------------------------------------------
-        public static async Task UpdateBooking(Change_Data data, Config config)
+        const string getPackageQuery = @"
+        SELECT package
+        FROM bookings
+        WHERE id = @bookingId;
+        ";   // SQL query that retrieves the package for the selected booking
+
+        var getPackageParams = new MySqlParameter[]    //Creates SQL parameters used to safely pass values into the database query
         {
-            // SQL query som uppdaterar en rad i tabellen bookings
-            // Vi ändrar paket, datum och antal gäster för en viss bokning (id)
-            const string updateBookingQuery = @"
-            UPDATE bookings
-            SET package = @package,
-            check_in = @check_in,
-            check_out = @check_out,
-            guests = @guests
-            WHERE id = @id;
-            ";
+            new("@bookingId", data.BookingId)
+        };
 
-            // Skapar en lista med parametrar som matchar @ värden i SQL queryn
-            var updateParams = new MySqlParameter[]
-            {
-                // ID på bokningen som ska uppdateras
-                new("@id", data.BookingId),
-                // För nytt paket
-                new("@package", data.NewPackageId),
-                // DateOnly --> DateTime innan vi skickar till databasen
-                new("@check_in", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
-                new("@check_out", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
-                // Nytt antal gäster
-                new("@guests", data.NewGuests)
-            };
+        object packageResult = await MySqlHelper.ExecuteNonQueryAsync(config.db, getPackageQuery, getPackageParams);   // Execute the query and retrieves the package result from the database
 
-            // Kör UPDATE - kommandot mot databasen (ingen data kommer att returneras)
-            await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateParams);    // 1. config.db = connection string.  2. updateBookingQuery = vår SQL text.  3. updateParams = parametrarna vi just skapade.
-        }
+        int packageId = Convert.ToInt32(packageResult);   // Converts the returned package value to an integer
+
+        const string updateBookingQuery = @"
+        UPDATE bookings
+        SET check_in = @checkIn,
+        check_out = @checkOut,
+        guests = @guests
+        WHERE id = @bookingId;
+        ";   // SQL query that updates booking details
+
+        var updateBookingParams = new MySqlParameter[]   // SQL parameters for the update
+        {
+            // Convert DateOnly to DateTime for MySQL
+            new("@checkIn", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
+            new("@checkOut", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
+            new("@guests", data.NewGuests),
+            new("@bookingId", data.BookingId),
+        };
+
+        // Execute the UPDATE query
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateBookingParams);
+
+        if (rows == 0)   // If no rows were updated, something went wrong
+            throw new Exception("No booking updated");
     }
 }
