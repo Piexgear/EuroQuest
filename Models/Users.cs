@@ -13,20 +13,20 @@ class Users
     {
         if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
-        List<Get_Data> result = new();
-        string query = "SELECT id, name, email, password FROM users";
-        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
-        {
-            while (reader.Read())
+            List<Get_Data> result = new();
+            string query = "SELECT id, name, email, password FROM users";
+            using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query))
             {
-                result.Add(new(
-                reader.GetInt32(0),
-                reader.GetString(1),
-                reader.GetString(2),
-                reader.GetString(3)));
+                while (reader.Read())
+                {
+                    result.Add(new(
+                    reader.GetInt32(0),
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.GetString(3)));
+                }
             }
-        }
-        return result;
+            return result;
         }
         else
         {
@@ -41,18 +41,18 @@ class Users
         if (ctx.Session.GetString("role") == Role.admin.ToString())
         {
             GetById_Data? result = null;
-        string query = "SELECT email, FROM users WHERE id = @id";
-        var parameters = new MySqlParameter[] { new("@id", id) };
+            string query = "SELECT email FROM users WHERE id = @id";
+            var parameters = new MySqlParameter[] { new("@id", id) };
 
-        using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
-        {
-            if (reader.Read())
+            using (var reader = await MySqlHelper.ExecuteReaderAsync(config.db, query, parameters))
             {
-                result = new(reader.GetString(0));
+                if (reader.Read())
+                {
+                    result = new(reader.GetString(0));
+                }
             }
-        }
 
-        return result;
+            return result;
         }
         else
         {
@@ -69,16 +69,16 @@ class Users
         {
             string querry = "INSERT INTO users(name, email, password) VALUES(@name, @email, @password)";
 
-        //indexerar själv för inmatning av data 
-        var parameters = new MySqlParameter[]
-        {
+            //indexerar själv för inmatning av data 
+            var parameters = new MySqlParameter[]
+            {
             new("@email", user.Email),
             new("@name", user.Name),
             new("@password", user.Password),
 
-        };
+            };
 
-        await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
+            await MySqlHelper.ExecuteNonQueryAsync(config.db, querry, parameters);
         }
     }
 
