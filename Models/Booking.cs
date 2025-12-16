@@ -121,96 +121,110 @@ class Bookings
             return result;
         }
     }
-}
 
 
 
-// Class for amount of people they can choose
-public record Get_Data(int Guests);   // the user can only send how many guests they would like to be
+    // Class for amount of people
+    public record SetGuests_Data(int BookingId, int Guests);
 
-public static int Get(Get_Data data)    // 
-{
-    if (data.Guests < 1 || data.Guests > 10)
+    public static async Task SetGuests(SetGuests_Data data, Config config)
     {
-        throw new Exception("Amount of guests must be between 1 - 10.");
-    }
+        if (data.Guests < 1 || data.Guests > 10)
+            throw new Exception("Amount of guests must be between 1 - 10");
 
-    return data.Guests;
-}
-
-
-
-// Class för avbokning
-public record Cancel_Data(int BookingId);
-
-public static async Task Cancel(Cancel_Data data, Config config)
-{
-    const string cancelQuery = @"
-    UPDATE bookings SET is_cancelled = 1 WHERE id = @bookingId;
-    ";
-
-    var parameters = new MySqlParameter[]
-    {
-        new("@bookingId", data.BookingId)
-    };
-
-    int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, cancelQuery, parameters);
-    if ( rows == 0)
-    {
-        throw new Exception("No booking was found with the id");
-    }
-}
-
-
-
-
-// Class för ändrade bokningar
-public record Update_Data(
-int BookingId,
-DateOnly NewCheckIn,
-DateOnly NewCheckOut,
-int NewGuests
-);
-
-public static async Task Update(Update_Data data, Config config)
-{
-    if (data.NewGuests < 1 || data.NewGuests > 10)
-        throw new Exception("Amount of guests must be between 1 - 10");
-
-    if (data.NewCheckIn >= data.NewCheckOut)
-        throw new Exception("Check-in must be before check-out.");
-
-    const string getPackageQuery = @"
-        SELECT package FROM bookings Where id = @bookingId;
+        const string query = @"
+        UPDATE bookings
+        SET guests = @guests
+        WHERE id = @bookingId;
         ";
 
-    var getPackageParams = new MySqlParameter[]
-    {
+        var parameters = new MySqlParameter[]
+        {
+            new("@guests", data.Guests),
             new("@bookingId", data.BookingId)
-    };
+        };
 
-    object packageResult = await MySqlHelper.ExecuteScalarAsync(config.db, getPackageQuery, getPackageParams);
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, query, parameters);
 
-    int packageId = Convert.ToInt32(packageResult);
+        if (rows == 0)
+            throw new Exception("No booking was updated");
+    }
 
-    const string updateBookingQuery = @"
-    UPDATE bookings 
-    SET check_in = @checkIn,
-    check_out = @checkOut,
-    guests = @guests
-    WHERE id = @bookingId;
-    ";
 
-    var updateBookingParams = new MySqlParameter[]
+    // class for cancelling bookings
+    public record Cancel_Data(int BookingId);
+
+    public static async Task Cancel(Cancel_Data data, Config config)
     {
-        new("@checkIn", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
-        new("@checkOut", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
-        new("@guests", data.NewGuests),
-        new("@bookingId", data.BookingId),
-    };
+        const string CancelQuery = @"
+        UPDATE bookings SET is_cancelled = 1 WHERE id = @bookingId;
+        ";
 
-    int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateBookingParams);
+        var parameters = new MySqlParameter[]
+        {
+            new("@bookingId", data.BookingId)
+        };
 
-    if (rows == 0)
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, CancelQuery, parameters);
+
+        if (rows == 0)
+        {
+            throw new Exception("No booking was found with the ID");
+        }
+    }
+
+
+
+    //Class for update bookings
+    public record Update_Data(
+    int BookingId,
+    DateOnly NewCheckIn,
+    DateOnly NewCheckOut,
+    int NewGuests
+    );
+
+    public static async Task Update(Update_Data data, Config config)
+    {
+        if (data.NewGuests < 1 || data.NewGuests > 10)
+            throw new Exception("Amount of guests must be between 1 - 10");
+
+        if (data.NewCheckIn >= data.NewCheckOut)
+        {
+            throw new Exception("Check-in must be before check-out");
+        }
+
+        const string getPackageQuery = @"
+        SELECT package FROM bookings WHERE id = @bookingId;
+        ";
+
+        var getPackageParams = new MySqlParameter[]
+        {
+            new("@bookingId", data.BookingId)
+        };
+
+        object packageResult = await MySqlHelper.ExecuteScalarAsync(config.db, getPackageQuery, getPackageParams);
+
+        int packageId = Convert.ToInt32(packageResult);
+
+        const string updateBookingQuery = @"
+        UPDATE bookings
+        SET check_in = @checkIn,
+        check_out = @checkOut,
+        guests = @guests
+        WHERE id = @bookingId;
+        ";
+
+        var updateBookingParams = new MySqlParameter[]
+        {
+            new("@checkIn", data.NewCheckIn.ToDateTime(TimeOnly.MinValue)),
+            new("@checkOut", data.NewCheckOut.ToDateTime(TimeOnly.MinValue)),
+            new("@guests", data.NewGuests),
+            new("@bookingId", data.BookingId),
+        };
+
+        int rows = await MySqlHelper.ExecuteNonQueryAsync(config.db, updateBookingQuery, updateBookingParams);
+
+        if (rows == 0)
         throw new Exception("No booking updated");
+    }
 }
