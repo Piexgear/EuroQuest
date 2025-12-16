@@ -50,6 +50,8 @@ app.MapPost("/packages", async (Packages.Post_Data data, Config config, HttpCont
     => await Packages.Post(data, config, ctx));
 app.MapGet("/packages", Packages.GetAll);
 
+
+
 app.MapDelete("/db", db_reset_to_default);
 
 app.Run();
@@ -57,6 +59,7 @@ app.Run();
 // async task är samma som void
 async Task db_reset_to_default(Config config)
 {
+    // 1️⃣ Table creation SQL
     string users_create = """
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER NOT NULL AUTO_INCREMENT,
@@ -91,8 +94,8 @@ async Task db_reset_to_default(Config config)
         name VARCHAR(255) NOT NULL,
         city INTEGER NOT NULL,
         amount_of_rooms INTEGER NOT NULL,
-        description TEXT(65535) NOT NULL,
-        beach_distance INTEGER NOT NULL COMMENT 'avstånd till strand',
+        description TEXT NOT NULL,
+        beach_distance INTEGER NOT NULL,
         pool TINYINT NOT NULL,
         breakfast TINYINT NOT NULL,
         center_distance INTEGER NOT NULL,
@@ -104,7 +107,7 @@ async Task db_reset_to_default(Config config)
     CREATE TABLE IF NOT EXISTS rooms (
         id INTEGER NOT NULL AUTO_INCREMENT,
         number INTEGER NOT NULL,
-        hotels_id INTEGER NOT NULL,
+        hotel INTEGER NOT NULL,   -- fixed column name
         capacity INTEGER NOT NULL,
         price INTEGER NOT NULL,
         PRIMARY KEY(id)
@@ -120,7 +123,7 @@ async Task db_reset_to_default(Config config)
         address VARCHAR(255) NOT NULL,
         city INTEGER NOT NULL,
         capacity INTEGER NOT NULL,
-        description TEXT(65535) NOT NULL,
+        description TEXT NOT NULL,
         PRIMARY KEY(id)
     );
     """;
@@ -128,24 +131,24 @@ async Task db_reset_to_default(Config config)
     string packages_create = """
     CREATE TABLE IF NOT EXISTS packages (
         id INTEGER NOT NULL AUTO_INCREMENT,
-        hotel_id INTEGER NOT NULL,
+        hotel INTEGER NOT NULL,   -- fixed column name
         PRIMARY KEY(id)
     );
     """;
 
     string package_activities_create = """
     CREATE TABLE IF NOT EXISTS package_activities (
-        package_id INTEGER NOT NULL,
-        activity_id INTEGER NOT NULL,
-        PRIMARY KEY(package_id, activity_id)
+        package INTEGER NOT NULL,
+        activity INTEGER NOT NULL,
+        PRIMARY KEY(package, activity)
     );
     """;
 
     string bookings_create = """
     CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER NOT NULL AUTO_INCREMENT,
-        package_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
+        package INTEGER NOT NULL,
+        user INTEGER NOT NULL,
         check_in DATE NOT NULL,
         check_out DATE NOT NULL,
         guests INTEGER NOT NULL,
@@ -155,31 +158,28 @@ async Task db_reset_to_default(Config config)
 
     string room_bookings_create = """
     CREATE TABLE IF NOT EXISTS room_bookings (
-        booking_id INTEGER NOT NULL,
-        room_id INTEGER NOT NULL,
-        PRIMARY KEY(booking_id, room_id)
+        booking INTEGER NOT NULL,
+        room INTEGER NOT NULL,
+        PRIMARY KEY(booking, room)
     );
     """;
 
+    // 2️⃣ Foreign key constraints
     string foreign_keys = """
     ALTER TABLE cities ADD FOREIGN KEY(country) REFERENCES countries(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE hotels ADD FOREIGN KEY(city) REFERENCES cities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE rooms ADD FOREIGN KEY(hotels_id) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE rooms ADD FOREIGN KEY(hotel) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE activities ADD FOREIGN KEY(city) REFERENCES cities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE packages ADD FOREIGN KEY(hotel_id) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE package_activities ADD FOREIGN KEY(package_id) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE package_activities ADD FOREIGN KEY(activity_id) REFERENCES activities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE bookings ADD FOREIGN KEY(package_id) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE bookings ADD FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE room_bookings ADD FOREIGN KEY(booking_id) REFERENCES bookings(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-    ALTER TABLE room_bookings ADD FOREIGN KEY(room_id) REFERENCES rooms(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE packages ADD FOREIGN KEY(hotel) REFERENCES hotels(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE package_activities ADD FOREIGN KEY(package) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE package_activities ADD FOREIGN KEY(activity) REFERENCES activities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE bookings ADD FOREIGN KEY(package) REFERENCES packages(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE bookings ADD FOREIGN KEY(user) REFERENCES users(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE room_bookings ADD FOREIGN KEY(booking) REFERENCES bookings(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ALTER TABLE room_bookings ADD FOREIGN KEY(room) REFERENCES rooms(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     """;
 
-
-
-
-
-    // Create tables
+    // 3️⃣ Execute creation queries
     await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, countries_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, cities_create);
@@ -191,5 +191,4 @@ async Task db_reset_to_default(Config config)
     await MySqlHelper.ExecuteNonQueryAsync(config.db, bookings_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, room_bookings_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, foreign_keys);
-
 }
