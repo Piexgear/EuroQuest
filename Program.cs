@@ -62,7 +62,7 @@ app.Run();
 // async task är samma som void
 async Task db_reset_to_default(Config config)
 {
-    // 1️⃣ Table creation SQL
+    // Table creation SQL
     string users_create = """
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER NOT NULL AUTO_INCREMENT,
@@ -167,7 +167,7 @@ async Task db_reset_to_default(Config config)
     );
     """;
 
-    // 2️⃣ Foreign key constraints
+    // Foreign key constraints
     string foreign_keys = """
     ALTER TABLE cities ADD FOREIGN KEY(country) REFERENCES countries(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     ALTER TABLE hotels ADD FOREIGN KEY(city) REFERENCES cities(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
@@ -182,7 +182,7 @@ async Task db_reset_to_default(Config config)
     ALTER TABLE room_bookings ADD FOREIGN KEY(room) REFERENCES rooms(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
     """;
 
-    // 3️⃣ Execute creation queries
+    // Execute creation queries
     await MySqlHelper.ExecuteNonQueryAsync(config.db, users_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, countries_create);
     await MySqlHelper.ExecuteNonQueryAsync(config.db, cities_create);
